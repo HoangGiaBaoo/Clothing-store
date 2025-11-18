@@ -1,0 +1,58 @@
+.header {
+    
+}
+
+.header-top {
+    background-color: #242021;
+    height: 36px;
+}
+
+.header-top-info {
+    display: flex;
+    justify-content: space-between;
+}
+
+.header-top-item {
+    display: flex;
+    align-items: center;
+    color: #fff;
+    font-size: 1.3rem;
+    line-height: 1.3rem;
+}
+
+.header-top-contact {
+    text-decoration: none;
+    color: #fff;
+}
+
+.header-top-hotline {
+    margin-right: 10px;
+    position: relative;
+    color: #ccc;
+}
+
+.header-top-hotline span {
+    color: #fff;
+    font-weight: 600;
+}
+
+.header-top-item--separate::after {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 1px;
+    height: 16px;
+    background-color: #a5a4a4;
+    right: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.header-top-link {
+    color: var(--white-color);
+    text-decoration: none;
+}
+
+.header-top-icon {
+    font-size: 1.6rem;
+}
