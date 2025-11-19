@@ -1,14 +1,31 @@
 :root {
-    --primary-color: rgb(238, 77, 45);
-    --white-color: #fff;
-    --black-color: #000;
-    --text-color: #333;
-    --border-color: #dbdbdb;
-    --star-gold-color: #ffce3e;
-
-    --header-height: 120px;
-    --navbar-height: 40px;
-    --header-with-search-height: calc(var(--header-height) - var(--navbar-height));
+    --shop-color-bg: #ffffff;
+    --shop-color-main: #ff0000;
+    --shop-color-text: #000000;
+    --shop-color-title: #000000;
+    --shop-color-hover: #ff0000;
+    --shop-color-button: #d2d2d2;
+    --shop-color-button-text: #d30000;
+    --shop-color-border: #e7e7e7;
+    --header-bg: #ffffff;
+    --header-color-text: #333333;
+    --topbar-bg: #242021;
+    --topbar-color-text: #ffffff;
+    --home-coupon-bg: #ffffff;
+    --home-coupon-light: #ffffff;
+    --home-coupon-border: #f8d0d3;
+    --home-coupon-text: #333333;
+    --footer-bg-color-1: #000000;
+    --footer-bg-color-2: #f5f5f5;
+    --footer-bg-color-copyright: #f5f5f5;
+    --footer-color-title: #d60000;
+    --footer-color-text: #000000;
+    --footer-color-hover: #d60000;
+    --home-flashsale-bg: #fff5f1;
+    --home-flashsale-color-title: #000000;
+    --home-flashsale-color-light: #d60000;
+    --home-flashsale-countdown-bg: #fb1717;
+    --home-flashsale-countdown-color-txt: #000000;
 }
 
 * {
