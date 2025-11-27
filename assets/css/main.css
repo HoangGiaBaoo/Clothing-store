@@ -1,58 +1,74 @@
-.header {
-    
-}
-
-.header-top {
-    background-color: #242021;
-    height: 36px;
-}
-
-.header-top-info {
-    display: flex;
-    justify-content: space-between;
-}
-
-.header-top-item {
-    display: flex;
-    align-items: center;
-    color: #fff;
-    font-size: 1.3rem;
-    line-height: 1.3rem;
-}
-
-.header-top-contact {
-    text-decoration: none;
-    color: #fff;
-}
-
-.header-top-hotline {
-    margin-right: 10px;
+.banner-slider {
+    width: 100%;
+    height: 650px;
+    overflow: hidden;
     position: relative;
-    color: #ccc;
 }
 
-.header-top-hotline span {
-    color: #fff;
-    font-weight: 600;
+.banner-slider .slides {
+    display: flex;
+    width: 100%; /* 4 ảnh */
+    height: 100%;
+    transition: transform 0.6s ease;
 }
 
-.header-top-item--separate::after {
-    content: "";
-    display: block;
+.banner-slider .slide {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.banner-slider .slide.active {
+    opacity: 1;
+}
+
+/* Mũi tên điều hướng */
+.banner-slider .arrow {
     position: absolute;
-    width: 1px;
-    height: 16px;
-    background-color: #a5a4a4;
-    right: -6px;
     top: 50%;
     transform: translateY(-50%);
+    font-size: 45px;
+    color: #000;
+    background: rgba(255, 255, 255, 0.7);
+    padding: 10px 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    user-select: none;
 }
 
-.header-top-link {
-    color: var(--white-color);
-    text-decoration: none;
+.banner-slider:hover .arrow {
+    display: block;
 }
 
-.header-top-icon {
-    font-size: 1.6rem;
+.banner-slider .left {
+    left: 30px;
+}
+
+.banner-slider .right {
+    right: 30px;
+}
+
+/* Dots */
+.dots {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+}
+
+.dot {
+    height: 12px;
+    width: 12px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.dot.active {
+    background-color: #ff0000;
 }

@@ -1,27 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-    <link rel="stylesheet" href="../../assets/css/base.css">
-    <link rel="stylesheet" href="../../assets/css/main.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="../../assets/fonts/fontawesome-free-6.7.2-web/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/main.css">
+  <link rel="stylesheet" href="../../assets/css/header-footer.css">
+  <link rel="stylesheet" href="../../assets/css/product_list.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/assets/fonts/fontawesome-free-6.7.2-web/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+    rel="stylesheet">
 </head>
+
 <body>
-    <div class="app">
-        <div id="header"></div>
+  <div class="app">
+    <div id="header"></div>
+    <div class="body">
+      <div class="banner-slider">
+    <div class="slides">
+        <img src="/assets/img/slide_1_img.jpg" class="slide active">
+        <img src="/assets/img/slide_2_img.jpg" class="slide">
+        <img src="/assets/img/slide_3_img.jpg" class="slide">
+        <img src="/assets/img/slide_4_img.jpg" class="slide">
     </div>
-    <script>
-        async function loadComponent(id, file) {
-            document.getElementById(id).innerHTML = await (await fetch(file)).text();
-        }
-        loadComponent("header", "component/header.html");
-    </script>
+
+    <!-- Nút điều hướng -->
+    <div class="arrow left" id="prevBtn">&#10094;</div>
+    <div class="arrow right" id="nextBtn">&#10095;</div>
+
+    <!-- Dots -->
+    <div class="dots">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+    </div>
+</div>
+      <div class="aa">
+        <div class="left">
+          <h1>Bộ lọc</h1>
+
+          <div class="dm">
+            <details>
+              <summary>Danh mục sản phẩm</summary>
+
+              <!-- Không dùng reload trang, dùng JS -->
+              <h5><a href="#" onclick="loadProducts(1)">Áo</a></h5>
+              <h5><a href="#" onclick="loadProducts(2)">Quần</a></h5>
+              <h5><a href="#" onclick="loadProducts(3)">Váy</a></h5>
+              <h5><a href="#" onclick="loadProducts(4)">Giày</a></h5>
+              <h5><a href="#" onclick="loadProducts(5)">Phụ kiện</a></h5>
+            </details>
+          </div>
+
+        </div>
+
+        <div class="right">
+          <div class="bb">
+            <h1>Sản phẩm</h1>
+
+            <div id="product-list"></div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="footer-top">
+      <div class="footer-item">
+        <div class="icon">
+          <svg width="32" height="32" fill="none" stroke="#000" stroke-width="1.5" stroke-linejoin="round"
+            stroke-linecap="round" viewBox="0 0 24 24">
+            <path d="M3 7 12 12 21 7 12 2 3 7z" />
+            <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7" />
+            <path d="M12 22V12" />
+          </svg>
+        </div>
+        <div class="text">
+          <h3>Miễn phí vận chuyển</h3>
+          <p>Áp dụng cho mọi đơn hàng từ 500k</p>
+        </div>
+      </div>
+      <div class="footer-item">
+        <div class="icon">
+          <svg width="32" height="32" fill="none" stroke="#000" stroke-width="1.5" stroke-linejoin="round"
+            stroke-linecap="round" viewBox="0 0 24 24">
+            <path d="M12 3 3 7v10l9 4 9-4V7l-9-4z" />
+            <path d="M15 10h-6M15 14h-6" />
+          </svg>
+        </div>
+        <div class="text">
+          <h3>Đổi hàng dễ dàng</h3>
+          <p>7 ngày đổi hàng vì bất kì lí do gì</p>
+        </div>
+      </div>
+      <div class="footer-item">
+        <div class="icon">
+          <svg width="32" height="32" fill="none" stroke="#000" stroke-width="1.5" stroke-linejoin="round"
+            stroke-linecap="round" viewBox="0 0 24 24">
+            <circle cx="12" cy="7" r="4" />
+            <path d="M5.5 20a6.5 6.5 0 0 1 13 0" />
+          </svg>
+        </div>
+        <div class="text">
+          <h3>Hỗ trợ nhanh chóng</h3>
+          <p>HOTLINE 24/7 : 0964942121</p>
+        </div>
+      </div>
+      <div class="footer-item">
+        <div class="icon">
+          <svg width="32" height="32" fill="none" stroke="#000" stroke-width="1.5" stroke-linejoin="round"
+            stroke-linecap="round" viewBox="0 0 24 24">
+            <path d="M4 7h16v12H4z" />
+            <path d="M4 7l8 6 8-6" />
+            <path d="M12 13v6" />
+          </svg>
+        </div>
+        <div class="text">
+          <h3>Thanh toán đa dạng</h3>
+          <p>Thanh toán khi nhận hàng, Napas, Visa, Chuyển Khoản</p>
+        </div>
+      </div>
+    </div>
+    <div id="footer"></div>
+  </div>
+  <script src="../../FE/js/main.js"></script>
+  <script>
+    async function loadComponent(id, file) {
+      document.getElementById(id).innerHTML = await (await fetch(file)).text();
+    }
+    loadComponent("header", "component/header.html");
+    loadComponent("footer", "component/footer.html");
+  </script>
 </body>
+
 </html>
