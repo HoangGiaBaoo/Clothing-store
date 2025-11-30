@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="../../assets/css/base.css">
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/header-footer.css">
+    <link rel="stylesheet" href="../../assets/css/login.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="/assets/fonts/fontawesome-free-6.7.2-web/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <div id="header"></div>
+        
+        <div class="body">
+            <div class="container">
+                <div class="form-wrapper">
+                    <div class="tabs">
+                        <div class="tab active">Đăng nhập</div>
+                        <div class="tab-divider">|</div>
+                        <div class="tab"><a href="register.html">Đăng ký</a></div>
+                    </div>
+
+                    <form class="form" id="loginForm">
+                        <input type="email" placeholder="Vui lòng nhập email của bạn" required>
+                        <input type="password" placeholder="Vui lòng nhập mật khẩu" required>
+                        
+                        <div class="recaptcha-notice">
+                            This site is protected by reCAPTCHA and the Google 
+                            <a href="#">Privacy Policy</a> and 
+                            <a href="#">Terms of Service</a> apply.
+                        </div>
+
+                        <div class="form-footer">
+                            <button type="submit" class="btn-submit">ĐĂNG NHẬP</button>
+                            <div class="links">
+                                <p>Bạn chưa có tài khoản? <a href="register.html">Đăng ký</a></p>
+                                <p>Bạn quên mật khẩu? <a href="#">Quên mật khẩu?</a></p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        
+        
+        <div id="footer"></div>
+    </div>
+
+    <script src="../../FE/js/main.js"></script>
+    <script>
+        async function loadComponent(id, file) {
+            document.getElementById(id).innerHTML = await (await fetch(file)).text();
+        }
+        loadComponent("header", "component/header.html");
+        loadComponent("footer", "component/footer.html");
+    </script>
+</body>
+</html>

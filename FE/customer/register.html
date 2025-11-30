@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="../../assets/css/base.css">
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/header-footer.css">
+    <link rel="stylesheet" href="../../assets/css/register.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="/assets/fonts/fontawesome-free-6.7.2-web/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <div id="header"></div>
+        
+        <div class="body">
+            <div class="container">
+                <div class="form-wrapper">
+                    <div class="tabs">
+                        <div class="tab"><a href="login.html">Đăng nhập</a></div>
+                        <div class="tab-divider">|</div>
+                        <div class="tab active">Đăng ký</div>
+                    </div>
+
+                    <form class="form" id="registerForm">
+                        <input type="text" placeholder="Họ" required>
+                        <input type="text" placeholder="Tên" required>
+                        
+                        <div class="gender-selection">
+                            <label>
+                                <input type="radio" name="gender" value="female" checked>
+                                <span>Nữ</span>
+                            </label>
+                            <label>
+                                <input type="radio" name="gender" value="male">
+                                <span>Nam</span>
+                            </label>
+                        </div>
+
+                        <input type="text" placeholder="mm/dd/yyyy" required>
+                        <input type="email" placeholder="Email" required>
+                        <input type="password" placeholder="Mật khẩu" required>
+                        
+                        <div class="recaptcha-notice">
+                            This site is protected by reCAPTCHA and the Google 
+                            <a href="#">Privacy Policy</a> and 
+                            <a href="#">Terms of Service</a> apply.
+                        </div>
+
+                        <div class="form-footer">
+                            <button type="submit" class="btn-submit">ĐĂNG KÝ</button>
+                            <div class="links">
+                                <p>Bạn đã có tài khoản? <a href="login.html">Đăng nhập ngay</a></p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    
+        
+        <div id="footer"></div>
+    </div>
+
+    <script src="../../FE/js/main.js"></script>
+    <script>
+        async function loadComponent(id, file) {
+            document.getElementById(id).innerHTML = await (await fetch(file)).text();
+        }
+        loadComponent("header", "component/header.html");
+        loadComponent("footer", "component/footer.html");
+    </script>
+</body>
+</html>
