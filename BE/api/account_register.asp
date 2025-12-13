@@ -1,7 +1,6 @@
 <!--#include file="/BE/db/connect.asp"-->
 <%
 Response.ContentType = "application/json"
-Response.Charset = "UTF-8"
 
 first = Request.Form("first_name")
 last  = Request.Form("last_name")
@@ -25,15 +24,22 @@ If Not rs.EOF Then
 End If
 
 ' Thêm vào database
-sql = "INSERT INTO Users (First_Name, Last_Name, Gender, Birthday, Email, Password) VALUES (" & _
-      "'" & first & "'," & _
-      "'" & last & "'," & _
-      "'" & gender & "'," & _
-      "'" & birthday & "'," & _
-      "'" & email & "'," & _
-      "'" & password & "')"
+Dim cmd
+Set cmd = Server.CreateObject("ADODB.Command")
+cmd.ActiveConnection = conn
+cmd.CommandText = "INSERT INTO Users (First_Name, Last_Name, Gender, Birthday, Email, Password) VALUES (?, ?, ?, ?, ?, ?)"
+cmd.CommandType = 1
 
-conn.Execute(sql)
+cmd.Parameters.Append cmd.CreateParameter("@first", 202, 1, 100, first)
+cmd.Parameters.Append cmd.CreateParameter("@last", 202, 1, 100, last)
+cmd.Parameters.Append cmd.CreateParameter("@gender", 202, 1, 20, gender)
+cmd.Parameters.Append cmd.CreateParameter("@birthday", 7,   1, , birthday) ' adDate
+cmd.Parameters.Append cmd.CreateParameter("@email", 202, 1, 150, email)
+cmd.Parameters.Append cmd.CreateParameter("@password", 202, 1, 255, password)
+
+cmd.Execute
+Set cmd = Nothing
+
 
 Response.Write "{""status"":""success"",""message"":""Đăng ký thành công""}"
 

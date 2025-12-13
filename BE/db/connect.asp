@@ -1,3 +1,8 @@
+<%@ LANGUAGE="VBScript" CODEPAGE="65001" %>
+<%
+Response.Charset = "UTF-8"
+Request.Charset = "UTF-8"
+%>
 <%
 Function Utf8Encode(text)
     Dim stream, bytes
