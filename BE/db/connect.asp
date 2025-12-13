@@ -29,7 +29,7 @@ End Function
 <%
     
     set conn = Server.CreateObject("ADODB.Connection")
-    strconn = "Provider=SQLOLEDB;Data Source=DESKTOP-RDPV4HN\GBAO;Initial Catalog=ShopQuanAo;User Id=sa;Password=Giabao2005@;"
+    strconn = "Provider=SQLOLEDB;Data Source=DESKTOP-RDPV4HN\GBAO;Initial Catalog=ClothingStore;User Id=sa;Password=Giabao2005@;"
     set rs = Server.CreateObject("ADODB.Recordset")
     conn.open strconn
 %>

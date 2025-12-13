@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,12 +13,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="/assets/fonts/fontawesome-free-6.7.2-web/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
     <div class="app">
         <div id="header"></div>
-        
+
         <div class="body">
             <div class="container">
                 <div class="form-wrapper">
@@ -28,9 +31,9 @@
                     </div>
 
                     <form class="form" id="registerForm">
-                        <input type="text" placeholder="Họ" required>
-                        <input type="text" placeholder="Tên" required>
-                        
+                        <input type="text" name="first_name" placeholder="Họ" required>
+                        <input type="text" name="last_name" placeholder="Tên" required>
+
                         <div class="gender-selection">
                             <label>
                                 <input type="radio" name="gender" value="female" checked>
@@ -42,33 +45,24 @@
                             </label>
                         </div>
 
-                        <input type="text" placeholder="mm/dd/yyyy" required>
-                        <input type="email" placeholder="Email" required>
-                        <input type="password" placeholder="Mật khẩu" required>
-                        
-                        <div class="recaptcha-notice">
-                            This site is protected by reCAPTCHA and the Google 
-                            <a href="#">Privacy Policy</a> and 
-                            <a href="#">Terms of Service</a> apply.
-                        </div>
+                        <input type="text" name="birthday" placeholder="mm/dd/yyyy" required>
+                        <input type="email" name="email" placeholder="Email" required>
+                        <input type="password" name="password" placeholder="Mật khẩu" required>
 
                         <div class="form-footer">
                             <button type="submit" class="btn-submit">ĐĂNG KÝ</button>
-                            <div class="links">
-                                <p>Bạn đã có tài khoản? <a href="login.html">Đăng nhập ngay</a></p>
-                            </div>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
 
-    
-        
+
+
         <div id="footer"></div>
     </div>
-
-    <script src="../../FE/js/main.js"></script>
+    
+    
     <script>
         async function loadComponent(id, file) {
             document.getElementById(id).innerHTML = await (await fetch(file)).text();
@@ -76,5 +70,7 @@
         loadComponent("header", "component/header.html");
         loadComponent("footer", "component/footer.html");
     </script>
+    <script src="../../FE/js/register.js"></script>
 </body>
+
 </html>

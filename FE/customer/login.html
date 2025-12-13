@@ -54,7 +54,6 @@
         <div id="footer"></div>
     </div>
 
-    <script src="../../FE/js/main.js"></script>
     <script>
         async function loadComponent(id, file) {
             document.getElementById(id).innerHTML = await (await fetch(file)).text();

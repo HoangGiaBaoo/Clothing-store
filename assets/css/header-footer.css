@@ -1,158 +1,253 @@
 .header {}
 
 .header-top {
-    background-color: #242021;
-    height: 36px;
+  background-color: #242021;
+  height: 36px;
 }
 
 .header-top-info {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 
 .header-top-item {
-    display: flex;
-    align-items: center;
-    color: #fff;
-    font-size: 1.3rem;
-    line-height: 1.3rem;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  font-size: 1.3rem;
+  line-height: 1.3rem;
 }
 
 .header-top-contact {
-    text-decoration: none;
-    color: #fff;
+  text-decoration: none;
+  color: #fff;
 }
 
 .header-top-hotline {
-    margin-right: 10px;
-    position: relative;
-    color: #ccc;
+  margin-right: 10px;
+  position: relative;
+  color: #ccc;
 }
 
 .header-top-hotline span {
-    color: #fff;
-    font-weight: 600;
+  color: #fff;
+  font-weight: 600;
 }
 
 .header-top-item--separate::after {
-    content: "";
-    display: block;
-    position: absolute;
-    width: 1px;
-    height: 16px;
-    background-color: #a5a4a4;
-    right: -6px;
-    top: 50%;
-    transform: translateY(-50%);
+  content: "";
+  display: block;
+  position: absolute;
+  width: 1px;
+  height: 16px;
+  background-color: #a5a4a4;
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .header-top-link {
-    color: var(--white-color);
-    text-decoration: none;
+  color: var(--white-color);
+  text-decoration: none;
 }
 
 .header-top-icon {
-    font-size: 1.6rem;
+  font-size: 1.6rem;
 }
 
 .navbar {
-    background-color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid #ddd;
-    font-size: 16px;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+  font-size: 16px;
 }
 
 /* Logo */
-.navbar__logo {
-
-}
+.navbar__logo {}
 
 .logo-img {
-    height: 50px;
+  height: 50px;
 }
 
 /* Menu chính */
 .navbar ul.menu {
-    list-style: none;
-    display: flex;
-    gap: 40px;
-    align-items: center;
+  list-style: none;
+  display: flex;
+  gap: 40px;
+  align-items: center;
 }
 
 .navbar ul.menu>li {
-    position: relative;
-    cursor: pointer;
-    white-space: nowrap;
-    user-select: none;
-    color: var(--header-color-text);
+  position: relative;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  color: var(--header-color-text);
 }
 
 .navbar ul.menu>li>a {
-    text-decoration: none;
-    color: #000;
-    padding: 5px 0;
-    display: inline-block;
+  text-decoration: none;
+  color: #000;
+  padding: 5px 0;
+  display: inline-block;
 }
 
 /* Dropdown menu */
 .navbar ul.menu li .dropdown {
-    display: none;
-    position: absolute;
-    top: 195%;
-    /* cách menu chính 10% chiều cao */
-    left: 0;
-    background: #fff;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-    padding: 10px 0;
-    min-width: 150px;
-    border-radius: 4px;
-    z-index: 100;
-    list-style: none;
+  display: none;
+  position: absolute;
+  top: 195%;
+  /* cách menu chính 10% chiều cao */
+  left: 0;
+  background: #fff;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  padding: 10px 0;
+  min-width: 200px;
+  border-radius: 2px;
+  z-index: 100;
+  list-style: none;
+}
+
+.has-dropdown::after {
+  content: "";
+  width: 80px;
+  height: 30px;
+  display: block;
+  position: absolute;
+  top: 20px;
+  right: 0;
 }
 
 /* Danh sách trong dropdown */
 .navbar ul.menu li .dropdown li {
-    padding: 8px 20px;
-    white-space: nowrap;
+  padding: 10px 20px;
+  white-space: nowrap;
 }
 
 .navbar ul.menu li .dropdown li a {
-    color: var(--header-color-text);
-    text-decoration: none;
-    display: block;
-    transition: background 0.3s ease;
+  color: var(--header-color-text);
+  text-decoration: none;
+  display: block;
 }
 
-.navbar ul.menu li .dropdown li a:hover {
-    background-color: #f0f0f0;
-}
 
 .dropdown-icon {
-    font-size: 1.1rem;
-    margin-left: 4px;
+  font-size: 1.1rem;
+  margin-left: 4px;
 }
 
 /* Hiển thị dropdown khi hover */
 .navbar ul.menu li.has-dropdown:hover>.dropdown {
-    display: block;
+  display: block;
 }
 
 .icon-list {
-    list-style: none;
-    display: flex;
+  list-style: none;
+  display: flex;
 }
 
 .icon-list-item {
-    margin-left: 24px;
+  margin-left: 24px;
 }
 
 .icon-list-icon {
-    font-size: 2rem;
-    font-weight: 600;
+  font-size: 2rem;
+  font-weight: 600;
 }
+
+.icon-user {
+  position: relative;
+  cursor: pointer;
+}
+
+.icon-wrap {
+  position: absolute;
+  background-color: #fff;
+  border-radius: 2px;
+  top: 290%;
+  right: -60px;
+  z-index: 1;
+  padding: 0;
+  width: 280px;
+  box-shadow: 0 1px 2px #898888;
+  display: none;
+  transform-origin: calc(100% - 40px) top;
+  animation: headerNotifyGrowth ease-in .15s;
+  will-change: opacity, transform;
+  cursor: default;
+}
+
+@keyframes headerNotifyGrowth {
+    from {
+        opacity: 0;
+        transform: scale(0);
+    }
+    
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.nav-search {
+  cursor: pointer;
+}
+
+.icon-user.active .icon-wrap {
+    display: block;
+}
+
+.icon-wrap::before {
+  content: "";
+    border: solid;
+    border-width: 10px 20px;
+    border-color: transparent transparent #fff transparent;
+    position: absolute;
+    top: -20px;
+    right: 50px;
+}
+
+.icon-wrap-header {
+  padding: 10px;
+}
+
+.icon-txt {
+  font-size: 2rem;
+  color: #555;
+  padding: 16px 16px;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  outline: none;
+  margin: 0;
+}
+
+.icon-info {
+  list-style: none;
+  padding: 0;
+}
+
+.icon-info-name {
+  margin: 8px 26px 16px 26px;
+  font-size: 1.6rem;
+}
+
+.icon-info-item {
+  margin: 8px 26px;
+  font-size: 1.4rem;
+  color: #555;
+}
+
+.icon-info-item:hover {
+  color: #f35050;
+}
+
+.icon-info-link {
+  text-decoration: none;
+}
+
 
 /* Tổng thể footer */
 footer {
@@ -207,7 +302,8 @@ footer {
   background: #fafafa;
   padding: 40px 60px;
   border-bottom: 1px solid #ddd;
-  gap: 0; /* cách nhau bằng line */
+  gap: 0;
+  /* cách nhau bằng line */
   font-size: 14px;
   color: #333;
 }
@@ -218,7 +314,8 @@ footer {
   padding: 0 30px;
   box-sizing: border-box;
   position: relative;
-  min-width: 0; /* tránh tràn text */
+  min-width: 0;
+  /* tránh tràn text */
 }
 
 /* Đường line giữa */
