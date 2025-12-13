@@ -1,0 +1,333 @@
+/* giohang.css - Kế thừa reset từ chiTietSanPham.css */
+
+.cart-container {
+    display: flex;
+    gap: 30px;
+    margin-top: 20px;
+    align-items: flex-start; /* Để cột phải không bị kéo dài xuống */
+}
+
+/* --- CỘT TRÁI (70%) --- */
+.cart-left {
+    flex: 7;
+}
+
+.cart-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee; /* Đường kẻ mờ dưới tiêu đề */
+    padding-bottom: 10px;
+}
+
+.cart-heading h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.cart-summary-text {
+    color: #666;
+}
+
+/* Thanh Free Ship */
+.shipping-progress-box {
+    margin-bottom: 25px;
+    border: 1px solid #eee;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.shipping-progress-box p {
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #555;
+}
+
+.shipping-progress-box strong {
+    color: #d32f2f; /* Hoặc màu đen tùy ảnh, ảnh gốc chữ đen bold */
+    font-weight: 700;
+}
+
+.progress-bar-bg {
+    height: 6px;
+    background-color: #e0e0e0;
+    border-radius: 3px;
+    position: relative;
+    margin-top: 15px;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background-color: #4caf50; /* Màu xanh lá như ảnh */
+    border-radius: 3px;
+    position: relative;
+    max-width: 100%;
+    transition: width 0.5s ease;
+}
+
+.truck-icon {
+    position: absolute;
+    right: -10px; /* Căn icon xe tải ở đầu mút */
+    top: -12px;
+    background: #4caf50;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    border: 2px solid white;
+}
+
+/* Danh sách sản phẩm */
+.cart-items {
+    border: 1px solid #eee;
+    border-radius: 4px;
+    margin-bottom: 30px;
+}
+
+.cart-item {
+    display: flex;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    align-items: center;
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.item-remove {
+    margin-right: 15px;
+}
+
+.item-remove button {
+    background: #999;
+    color: white;
+    border: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.item-remove button:hover {
+    background: #d32f2f;
+}
+
+.item-image {
+    width: 90px;
+    height: 110px;
+    flex-shrink: 0;
+    margin-right: 20px;
+}
+
+.item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.item-info {
+    flex: 1;
+}
+
+.item-info h3 {
+    margin: 0 0 5px 0;
+    font-size: 15px;
+}
+
+.item-info h3 a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+}
+
+.item-info h3 a:hover {
+    color: #d32f2f;
+}
+
+.item-variant {
+    color: #777;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.item-price {
+    font-weight: 700;
+    text-align: right;
+    margin-right: 30px;
+    min-width: 100px;
+}
+
+.price-current {
+    font-size: 16px;
+    color: #333;
+}
+
+.item-qty .qty-controls {
+    /* Copy style từ trang chi tiết nhưng nhỏ hơn */
+    display: flex;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    height: 30px;
+}
+
+.item-qty .qty-btn {
+    width: 25px;
+    border: none;
+    background: #fff;
+    cursor: pointer;
+}
+
+.item-qty .qty-input {
+    width: 40px;
+    border: none;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    text-align: center;
+    font-size: 14px;
+}
+
+/* Ghi chú đơn hàng */
+.cart-note label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.cart-note textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+/* --- CỘT PHẢI (30%) --- */
+.cart-right {
+    flex: 3;
+}
+
+.order-summary {
+    background: #fff;
+    /* Có thể thêm border nếu muốn */
+}
+
+.order-summary h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.summary-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.total-price {
+    color: #d32f2f;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.summary-notes {
+    list-style: disc;
+    padding-left: 20px;
+    color: #666;
+    font-size: 13px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.btn-checkout {
+    width: 100%;
+    background: #d32f2f; /* Đỏ như ảnh */
+    color: white;
+    border: none;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.3s;
+}
+
+.btn-checkout:hover {
+    background: #b71c1c;
+}
+
+/* Box Chính sách (Màu xanh nhạt) */
+.policy-box {
+    margin-top: 20px;
+    background: #e3f2fd; /* Xanh nhạt */
+    padding: 15px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #333;
+}
+
+.policy-box h4 {
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+/* Box Khuyến mãi */
+.promo-box {
+    margin-top: 20px;
+    border: 1px solid #eee;
+    padding: 15px;
+    border-radius: 4px;
+    min-height: 100px;
+}
+
+.promo-box h4 {
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* Responsive Mobile */
+@media (max-width: 768px) {
+    .cart-container {
+        flex-direction: column;
+    }
+    
+    .cart-left, .cart-right {
+        width: 100%;
+    }
+    
+    .cart-item {
+        flex-wrap: wrap;
+    }
+    
+    .item-image {
+        margin-bottom: 10px;
+    }
+    
+    .item-price {
+        display: none; /* Ẩn giá desktop */
+    }
+    
+    .item-price-mobile {
+        display: block; /* Hiện giá mobile dưới tên */
+        font-weight: 700;
+        color: #d32f2f;
+        margin-top: 5px;
+    }
+}

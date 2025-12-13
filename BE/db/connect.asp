@@ -1,35 +1,34 @@
 <%
-Function Utf8Encode(text)
-    Dim stream, bytes
-    Set stream = Server.CreateObject("ADODB.Stream")
-    stream.Type = 2 'Text
-    stream.Mode = 3
-    stream.Open
-    stream.Charset = "utf-8"
-    stream.WriteText text
-    stream.Position = 0
-    stream.Type = 1 'Binary
-    bytes = stream.Read
-    stream.Close
-    Set stream = Nothing
+' ==============================
+'  FILE: connect.asp (fix UTF-8)
+' ==============================
+On Error Resume Next
 
-    ' Loại bỏ BOM nếu có (3 byte đầu EF BB BF)
-    If LenB(bytes) >= 3 Then
-        If AscB(MidB(bytes, 1, 1)) = &HEF And _
-           AscB(MidB(bytes, 2, 1)) = &HBB And _
-           AscB(MidB(bytes, 3, 1)) = &HBF Then
-            bytes = MidB(bytes, 4)
-        End If
-    End If
+Set conn = Server.CreateObject("ADODB.Connection")
+Set rs   = Server.CreateObject("ADODB.Recordset")
+Set rs1  = Server.CreateObject("ADODB.Recordset")
 
-    Utf8Encode = bytes
-End Function
+' ===== THÔNG TIN SQL =====
+sql_server   = "ALEXXXX\MSSQLSERVER04"
+sql_database = "torano"
+sql_user     = "sa"
+sql_pass     = "dream1012"
 
-%>
-<%
-    
-    set conn = Server.CreateObject("ADODB.Connection")
-    strconn = "Provider=SQLOLEDB;Data Source=DESKTOP-RDPV4HN\GBAO;Initial Catalog=ClothingStore;User Id=sa;Password=Giabao2005@;"
-    set rs = Server.CreateObject("ADODB.Recordset")
-    conn.open strconn
+strconn = "Provider=SQLOLEDB;Data Source=" & sql_server & _
+          ";Initial Catalog=" & sql_database & _
+          ";User ID=" & sql_user & ";Password=" & sql_pass & ";"
+
+conn.Open strconn
+
+If Err.Number <> 0 Then
+    Response.Write "<b style='color:red'>❌ Lỗi kết nối SQL Server:</b><br>"
+    Response.Write Err.Description & "<br><br>"
+    Response.Write "<b>➡ Hãy kiểm tra lại:</b><br>"
+    Response.Write "- SQL Server đã chạy chưa?<br>"
+    Response.Write "- Server name đúng chưa? (ALEXXXX\MSSQLSERVER04)<br>"
+    Response.Write "- User sa đúng mật khẩu chưa?<br>"
+    Response.End
+End If
+
+'Response.Write "<b style='color:green'>✅ Kết nối thành công!</b>"
 %>

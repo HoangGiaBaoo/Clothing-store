@@ -1,0 +1,658 @@
+/* product-detail.css */
+
+/* --- 1. RESET & GLOBAL STYLES --- */
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: 'Arial', sans-serif; 
+}
+
+body {
+    color: #333;
+    font-size: 14px;
+}
+
+
+/* --- 3. BREADCRUMB --- */
+.breadcrumb { 
+    background: #f8f9fa; 
+    padding: 12px 20px; 
+    font-size: 14px; 
+}
+
+.breadcrumb-content { 
+    max-width: 1200px; 
+    margin: 0 auto; 
+}
+
+.breadcrumb a { 
+    color: #666; 
+    text-decoration: none; 
+    transition: color 0.3s; 
+}
+
+.breadcrumb a:hover { 
+    color: #d32f2f; 
+}
+
+.breadcrumb span { 
+    color: #999; 
+    margin: 0 8px; 
+}
+
+.current { 
+    color: #333; 
+    font-weight: 600; 
+}
+
+/* --- 4. PRODUCT LAYOUT --- */
+.container { 
+    max-width: 1200px; 
+    margin: 30px auto; 
+    padding: 0 20px; 
+}
+
+.product-container { 
+    display: flex; 
+    gap: 50px; 
+    margin-bottom: 50px; 
+}
+
+/* --- 5. PRODUCT IMAGES --- */
+.product-images { 
+    flex: 1; 
+}
+
+.main-image { 
+    border: 1px solid #eee; 
+    border-radius: 10px; 
+    margin-bottom: 20px; 
+    text-align: center; 
+    padding: 25px; 
+    background: #f9f9f9; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+}
+
+.main-image img { 
+    max-width: 100%; 
+    height: auto; 
+    max-height: 550px; 
+    object-fit: contain; 
+    transition: transform 0.3s; 
+}
+
+.main-image:hover img { 
+    transform: scale(1.02); 
+}
+
+/* --- SỬA ĐỔI: THUMBNAILS HÀNG NGANG --- */
+
+.thumbnails { 
+    display: flex; 
+    gap: 12px; 
+    
+    /* 1. QUAN TRỌNG: Cấm xuống dòng */
+    flex-wrap: nowrap; 
+    
+    /* Căn lề trái để bắt đầu hàng */
+    justify-content: flex-start; 
+    
+    /* 2. Cho phép cuộn ngang nếu quá nhiều ảnh */
+    overflow-x: auto; 
+    /* Thêm chút padding dưới để thanh cuộn không che mất ảnh */
+    padding-bottom: 5px;
+
+    /* --- Tùy chọn: Ẩn thanh cuộn cho đẹp (trên Chrome/Safari/Edge mới) --- */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+}
+
+/* Ẩn thanh cuộn trên Chrome/Safari */
+.thumbnails::-webkit-scrollbar {
+    display: none;
+}
+
+.thumbnail { 
+    /* Giữ nguyên kích thước cũ */
+    width: 85px; 
+    height: 85px; 
+    
+    /* 3. QUAN TRỌNG: Ngăn không cho ảnh bị co lại khi thiếu chỗ */
+    flex-shrink: 0;
+    
+    border: 2px solid #ddd; 
+    border-radius: 8px; 
+    overflow: hidden; 
+    cursor: pointer; 
+    transition: all 0.3s; 
+}
+
+.thumbnail:hover { 
+    border-color: #999; 
+    transform: translateY(-2px); 
+}
+
+.thumbnail.active { 
+    border-color: #d32f2f; 
+    box-shadow: 0 4px 8px rgba(211, 47, 47, 0.2); 
+}
+
+.thumbnail img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+}
+
+/* --- 6. PRODUCT INFO --- */
+.product-info { 
+    flex: 1; 
+}
+
+.product-title { 
+    font-size: 28px; 
+    font-weight: 700; 
+    margin-bottom: 10px; 
+    color: #000; 
+    line-height: 1.3; 
+}
+
+/* --- PRICE SECTION --- */
+.price-section { 
+    margin: 15px 0 25px 0; 
+    padding: 0;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    border: none;
+}
+
+.price-section label {
+    font-weight: 700;
+    margin-right: 15px;
+    min-width: 90px;
+    font-size: 16px;
+    color: #333;
+}
+
+.current-price { 
+    font-size: 32px; 
+    color: #d32f2f; 
+    font-weight: 700; 
+}
+
+.old-price { 
+    font-size: 18px; 
+    color: #999; 
+    text-decoration: line-through; 
+    margin-left: 15px; 
+    font-weight: 400;
+}
+
+.discount-badge { 
+    background: #d32f2f; 
+    color: white; 
+    padding: 3px 8px; 
+    border-radius: 4px; 
+    font-weight: 600; 
+    font-size: 13px; 
+    margin-left: 10px; 
+}
+
+/* ======================================================== */
+/* --- CĂN CHỈNH THẲNG HÀNG: MÀU SẮC, SIZE, SỐ LƯỢNG --- */
+/* ======================================================== */
+
+/* 1. Thiết lập CỘT TRÁI (Tiêu đề Label) */
+.option-label,
+.quantity-section .option-label {
+    display: block;
+    font-weight: 700;
+    color: #333;
+    font-size: 16px;
+    
+    /* CỐ ĐỊNH ĐỘ RỘNG TIÊU ĐỀ */
+    min-width: 90px; 
+    margin-right: 10px;
+    margin-bottom: 0;
+}
+
+/* 2. Thiết lập CỘT GIỮA (Giá trị text: Tên màu, Tên size) */
+.option-value {
+    font-weight: 700;
+    color: #0d0000;
+    font-size: 14px;
+    
+    /* CỐ ĐỊNH ĐỘ RỘNG VÙNG CHỮ */
+    display: inline-block;
+    width: 120px;       /* Cố định 120px cho phần chữ này */
+    margin-right: 10px; /* Thêm 20px khoảng cách tới nút bấm */
+    
+    /* Xử lý chữ quá dài thì hiện dấu ... */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-right: 1px solid #eee; /* Kẻ vạch ngăn cách nhẹ */
+    padding-right: 10px;
+}
+
+/* 3. Container cho các dòng */
+.option-section {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+    min-height: 40px; /* Giữ chiều cao tối thiểu */
+}
+
+.option-buttons { 
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 10px; 
+}
+
+.option-btn { 
+    padding: 8px 20px; 
+    border: 1px solid #ddd; 
+    background: white; 
+    cursor: pointer; 
+    border-radius: 3px; 
+    transition: all 0.2s; 
+    font-size: 14px; 
+    min-width: 60px; 
+    text-align: center; 
+    font-weight: 400; 
+    position: relative;
+    overflow: hidden;
+}
+
+.option-btn:hover { 
+    border-color: #d32f2f; 
+}
+
+.option-btn.active { 
+    border: 1px solid #d32f2f; 
+    background: white; 
+    color: #333; 
+    box-shadow: none;
+}
+
+/* Góc tam giác đỏ */
+.option-btn.active::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-top: 12px solid #d32f2f;
+}
+
+/* Dấu tích trắng */
+.option-btn.active::before {
+    content: '✓';
+    position: absolute;
+    top: -4px;
+    right: 0px;
+    color: white;
+    font-size: 8px;
+    z-index: 1;
+    font-weight: bold;
+}
+
+/* --- SỐ LƯỢNG (Align theo quy tắc trên) --- */
+.quantity-section { 
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+    min-height: 40px;
+}
+
+.quantity-controls { 
+    display: flex; 
+    border: 1px solid #ddd; 
+    border-radius: 3px; 
+    height: 35px;
+    
+    /* QUAN TRỌNG: Đẩy ô số lượng sang phải để khớp với nút màu/size */
+    /* Công thức: Width của option-value (120px) + Margin phải (10px) = 130px */
+    margin-left: 130px; 
+}
+
+.qty-btn { 
+    width: 40px; 
+    height: 100%; 
+    border: none; 
+    background: #fff; 
+    cursor: pointer; 
+    font-size: 20px; 
+    color: #333;
+}
+
+.qty-btn:hover { 
+    background: #f5f5f5; 
+    color: #d32f2f;
+}
+
+.qty-input { 
+    width: 60px; 
+    height: 100%; 
+    border: none; 
+    text-align: center; 
+    font-size: 16px; 
+    font-weight: 600; 
+    border-left: 1px solid #ddd; 
+    border-right: 1px solid #ddd; 
+    color: #333;
+}
+
+.qty-input:focus { outline: none; }
+
+/* ======================================================== */
+
+/* --- ACTION BUTTONS --- */
+.action-buttons { 
+    display: flex; 
+    gap: 15px; 
+    margin: 35px 0; 
+}
+
+.btn { 
+    padding: 15px 30px; 
+    border: none; 
+    cursor: pointer; 
+    font-size: 16px; 
+    font-weight: 700; 
+    border-radius: 4px; 
+    flex: 1; 
+    transition: all 0.3s; 
+    text-align: center; 
+    letter-spacing: 0.5px; 
+    text-transform: uppercase;
+}
+
+.btn-cart { 
+    border: 1px solid #d32f2f; 
+    background: white; 
+    color: #d32f2f; 
+}
+.btn-cart:hover { 
+    background: #d32f2f; 
+    color: white; 
+}
+
+.btn-buy { 
+    background: #d32f2f; 
+    color: white; 
+}
+.btn-buy:hover { 
+    background: #b71c1c; 
+    box-shadow: 0 4px 10px rgba(211, 47, 47, 0.3);
+}
+
+/* --- SHARE & FEATURES --- */
+.share-section {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.social-icons {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0;
+}
+
+.social-btn {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: opacity 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 4px;
+}
+
+.social-btn:hover { opacity: 0.8; }
+.social-facebook { background: #1877f2; }
+.social-messenger { background: #0084ff; }
+.social-twitter { background: #1da1f2; }
+.social-pinterest { background: #e60023; }
+.social-link { background: #14b8a6; }
+
+/* --- CSS TOOLTIP (Hiệu ứng hiện chữ khi Hover) --- */
+
+/* 1. Thiết lập vị trí gốc cho nút cha */
+.social-btn {
+    position: relative; /* Quan trọng: Để tooltip căn theo nút này */
+    /* Giữ nguyên các code cũ của .social-btn ở trên... */
+}
+
+/* 2. Tạo khung chứa chữ (Tooltip) */
+.social-btn::after {
+    content: attr(data-tooltip); /* Lấy chữ từ HTML hiển thị ra */
+    
+    position: absolute;
+    bottom: 125%; /* Đẩy lên trên nút 1 khoảng */
+    left: 50%;
+    transform: translateX(-50%) translateY(10px); /* Căn giữa ngang + đặt vị trí chờ animation */
+    
+    background-color: #333; /* Màu nền đen xám */
+    color: white;           /* Chữ trắng */
+    padding: 5px 10px;      /* Khoảng cách lề */
+    border-radius: 4px;     /* Bo góc */
+    font-size: 11px;        /* Cỡ chữ nhỏ */
+    font-family: Arial, sans-serif;
+    white-space: nowrap;    /* Không cho xuống dòng */
+    font-weight: normal;
+    
+    /* Ẩn mặc định */
+    opacity: 0;
+    visibility: hidden;
+    
+    /* Hiệu ứng mượt */
+    transition: all 0.3s ease;
+    pointer-events: none;   /* Để chuột không bị vướng vào tooltip */
+    z-index: 10;
+}
+
+/* 3. Tạo mũi tên tam giác nhỏ ở dưới (Tuỳ chọn - cho đẹp) */
+.social-btn::before {
+    content: '';
+    position: absolute;
+    bottom: 115%;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    border: 6px solid transparent;
+    border-top-color: #333; /* Màu cùng với tooltip */
+    
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+/* 4. Trạng thái khi Hover: Hiện lên và bay nhẹ lên trên */
+.social-btn:hover::after,
+.social-btn:hover::before {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0px); /* Bay lên vị trí chuẩn */
+}
+
+.features {
+    display: grid;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+    margin-top: 1rem;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.feature-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.feature-text { font-size: 1.36rem; }
+.feature-title { font-weight: bold; color: #111827; }
+.feature-desc { color: #6b7280; }
+
+.feature-shipping { background: #dbeafe; }
+.feature-shipping .feature-icon { background: #bfdbfe; color: #2563eb; }
+
+.feature-authentic { background: #d1fae5; }
+.feature-authentic .feature-icon { background: #a7f3d0; color: #059669; }
+
+.feature-hotline { background: #e9d5ff; }
+.feature-hotline .feature-icon { background: #d8b4fe; color: #9333ea; }
+.feature-hotline .feature-desc { color: #9333ea; font-weight: 600; }
+
+/* --- 7. TABS & FOOTER --- */
+.product-details { 
+    margin-top: 50px; 
+}
+
+.detail-tabs { 
+    display: flex; 
+    border-bottom: 2px solid #eee; 
+    margin-bottom: 25px; 
+}
+
+.tab-btn { 
+    padding: 15px 30px; 
+    background: none; 
+    border: none; 
+    cursor: pointer; 
+    font-size: 16px; 
+    font-weight: 600; 
+    color: #666; 
+    border-bottom: 3px solid transparent; 
+    transition: all 0.3s; 
+}
+
+.tab-btn.active { 
+    color: #d32f2f; 
+    border-bottom: 3px solid #d32f2f; 
+}
+.tab-btn:hover { color: #d32f2f; }
+
+.tab-content { 
+    display: none; 
+    padding: 25px; 
+    background: #f9f9f9; 
+    border-radius: 10px; 
+    border: 1px solid #eee; 
+}
+
+.tab-content.active { display: block; }
+
+.tab-content h3 { 
+    font-size: 22px; 
+    margin-bottom: 20px; 
+    color: #333; 
+    padding-bottom: 15px; 
+    border-bottom: 2px solid #ddd; 
+}
+
+.tab-content ul { list-style: none; padding-left: 0; }
+.tab-content ul li { 
+    padding: 10px 0; 
+    border-bottom: 1px dashed #ddd; 
+    color: #555; 
+}
+.tab-content ul li:last-child { border-bottom: none; }
+
+.footer { 
+    text-align: center; 
+    padding: 30px; 
+    color: #666; 
+    border-top: 1px solid #eee; 
+    margin-top: 60px; 
+    background: #f8f9fa; 
+}
+.footer p { margin: 5px 0; }
+
+/* --- RESPONSIVE --- */
+@media (max-width: 992px) { 
+    .product-container { 
+        flex-direction: column; 
+        gap: 30px; 
+    } 
+}
+
+@media (max-width: 768px) {
+    .header-content { 
+        flex-direction: column; 
+        gap: 15px; 
+    }
+    
+    .nav { 
+        justify-content: center; 
+        flex-wrap: wrap; 
+    }
+    
+    .product-title { font-size: 24px; }
+    
+    .action-buttons { 
+        flex-direction: column; 
+    }
+    
+    .btn { width: 100%; }
+    
+    .detail-tabs { flex-wrap: wrap; }
+    
+    .tab-btn { 
+        flex: 1; 
+        min-width: 120px; 
+        text-align: center; 
+    }
+    
+    /* Responsive cho layout ngang option */
+    /* Khi màn hình nhỏ thì cho các dòng xuống hàng tự nhiên */
+    .option-section, .quantity-section {
+        flex-direction: column;
+        align-items: flex-start;
+        height: auto;
+    }
+    
+    /* Reset chiều rộng cố định */
+    .option-label, 
+    .quantity-section .option-label {
+        min-width: auto;
+        margin-bottom: 5px;
+    }
+    
+    .option-value {
+        width: auto;
+        border-right: none;
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    
+    /* Reset lề trái của số lượng */
+    .quantity-controls {
+        margin-left: 0;
+    }
+}
