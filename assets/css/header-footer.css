@@ -3,11 +3,15 @@
 .header-top {
   background-color: #242021;
   height: 36px;
+  display : flex;
+  align-items: center;
+
 }
 
 .header-top-info {
   display: flex;
   justify-content: space-between;
+  
 }
 
 .header-top-item {
