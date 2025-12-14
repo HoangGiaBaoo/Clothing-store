@@ -39,7 +39,7 @@ Dim rsCount
 Set rsCount = conn.Execute("SELECT COUNT(*) FROM Cart WHERE SessionID = '" & currentSessionID & "'")
 If rsCount(0) = 0 Then
     rsCount.Close
-    Response.Redirect "../FE/customer/index.html"
+    Response.Redirect "index.asp" ' Giỏ hàng trống, chuyển về trang chủ
 End If
 rsCount.Close
 
@@ -90,7 +90,7 @@ rsList.Open sqlList, conn
     
     <div class="col-left">
         <div class="checkout-header">
-            <a href="../FE/customer/index.html" class="logo">TORANO</a>
+            <a href="index.asp" class="logo">TORANO</a>
             <div class="breadcrumb">
                 <a href="cart.asp">Giỏ hàng</a> <i class="fas fa-chevron-right"></i> <span>Thông tin giao hàng</span>
             </div>

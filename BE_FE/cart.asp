@@ -128,7 +128,7 @@ End If
     <div class="grid">
         <div class="navbar">
             <div class="navbar__logo">
-                <a href="../FE/customer/index.html"><img class="logo-img" src="../assets/img/logo.png" alt="logo"></a>
+                <a href="index.asp"><img class="logo-img" src="../assets/img/logo.png" alt="logo"></a>
             </div>
             <ul class="menu">
                 <li><a href="#">Sản phẩm mới</a></li>
@@ -209,7 +209,7 @@ End If
                 <img src="https://bizweb.dktcdn.net/100/320/202/themes/714916/assets/empty-cart.png" alt="Empty Cart" style="width: 200px; margin-bottom: 20px;">
                 <h3>Giỏ hàng của bạn đang trống</h3>
                 <p>Hãy chọn thêm sản phẩm để mua sắm nhé!</p>
-                <a href="../FE/customer/index.html" class="btn-checkout" style="display: inline-block; width: auto; margin-top: 20px; text-decoration: none;">Tiếp tục mua sắm</a>
+                <a href="index.asp" class="btn-checkout" style="display: inline-block; width: auto; margin-top: 20px; text-decoration: none;">Tiếp tục mua sắm</a>
             </div>
         <% Else %>
             
