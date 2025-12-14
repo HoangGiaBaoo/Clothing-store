@@ -72,6 +72,7 @@ h3 { font-size: 18px; margin-top: 30px; margin-bottom: 15px; }
 .radio-box:last-of-type { border-bottom-left-radius: 4px; border-bottom-right-radius: 4px; }
 
 .radio-left { display: flex; align-items: center; gap: 10px; }
+.radio-left span { font-size: 14px; color: #333; }
 .icon-payment { color: #555; font-size: 20px; width: 25px; text-align: center; }
 
 .checkout-footer {
@@ -81,7 +82,10 @@ h3 { font-size: 18px; margin-top: 30px; margin-bottom: 15px; }
     margin-top: 30px;
 }
 
-.checkout-footer a { text-decoration: none; color: #338dbc; }
+.checkout-footer a { 
+    text-decoration: none;
+     color: #338dbc;
+     font-size: 14px;}
 
 .btn-order {
     background: #338dbc;

@@ -34,6 +34,7 @@ size  = Replace(Trim(size), "'", "''")
 Dim sessID
 sessID = Session.SessionID
 
+
 ' A. TÌM VARIANT ID (ID Biến thể)
 Dim variantID, rsVar
 variantID = 0 ' Mặc định là 0 (Số), KHÔNG dùng NULL

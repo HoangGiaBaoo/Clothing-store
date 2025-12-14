@@ -1,4 +1,10 @@
 <%
+' --- BẮT BUỘC: KÍCH HOẠT SESSION ĐỂ KHÔNG BỊ LỖI 00000000 ---
+If IsEmpty(Session("InitSession")) Then
+    Session("InitSession") = 1
+End If
+%>
+<%
 ' ==============================
 '  FILE: connect.asp (fix UTF-8)
 ' ==============================

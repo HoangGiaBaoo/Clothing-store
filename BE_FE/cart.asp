@@ -128,7 +128,7 @@ End If
     <div class="grid">
         <div class="navbar">
             <div class="navbar__logo">
-                <a href="/FE/customer/index.html"><img class="logo-img" src="/assets/img/logo.png" alt="logo"></a>
+                <a href="../FE/customer/index.html"><img class="logo-img" src="../assets/img/logo.png" alt="logo"></a>
             </div>
             <ul class="menu">
                 <li><a href="#">Sản phẩm mới</a></li>
@@ -258,12 +258,12 @@ End If
                             <button title="Xóa sản phẩm" onclick="removeItem(<%=cartID%>)"><i class="fas fa-times"></i></button>
                         </div>
                         <div class="item-image">
-                            <a href="chiTietSanPham.asp?id=<%=prodID%>">
+                            <a href="product-detail.asp?id=<%=prodID%>">
                                 <img src="<%=pImage%>" alt="Product Image">
                             </a>
                         </div>
                         <div class="item-info">
-                            <h3><a href="chiTietSanPham.asp?id=<%=prodID%>"><% WriteUTF8(pName) %></a></h3>
+                            <h3><a href="product-detail.asp?id=<%=prodID%>"><% WriteUTF8(pName) %></a></h3>
                             
                             <div class="item-variant">
                                 <% If pColor <> "" Then %>
@@ -382,7 +382,7 @@ End If
         <input type="email" placeholder="Nhập email của bạn" required>
         <button type="submit">ĐĂNG KÝ</button>
       </form>
-      <img src="/assets/img/bocongthuong.png"
+      <img src="../assets/img/bocongthuong.png"
         alt="Đã thông báo Bộ Công Thương" class="cert" />
     </div>
   </div>
