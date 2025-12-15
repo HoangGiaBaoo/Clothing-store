@@ -38,9 +38,8 @@ If productId = "" Or Not IsNumeric(productId) Then productId = 1 Else productId 
 
 ' Lấy thông tin sản phẩm
 Dim sqlProduct, rsProduct
-sqlProduct = "SELECT TOP 1 p.*, b.BrandName, c.CategoryName " & _
+sqlProduct = "SELECT TOP 1 p.*, c.CategoryName " & _
              "FROM Products p " & _
-             "LEFT JOIN Brands b ON p.BrandID = b.BrandID " & _
              "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID " & _
              "WHERE p.ProductID = " & productId & " AND p.IsActive = 1"
 
@@ -56,21 +55,20 @@ On Error GoTo 0
 If rsProduct.EOF Then
     rsProduct.Close
     ' Fallback lấy sản phẩm đầu tiên
-    sqlProduct = "SELECT TOP 1 p.*, b.BrandName, c.CategoryName FROM Products p LEFT JOIN Brands b ON p.BrandID = b.BrandID LEFT JOIN Categories c ON p.CategoryID = c.CategoryID WHERE p.IsActive = 1 ORDER BY p.ProductID"
+    sqlProduct = "SELECT TOP 1 p.*, c.CategoryName FROM Products p LEFT JOIN Categories c ON p.CategoryID = c.CategoryID WHERE p.IsActive = 1 ORDER BY p.ProductID"
     rsProduct.Open sqlProduct, conn
     If rsProduct.EOF Then Response.End
     productId = rsProduct("ProductID")
 End If
 
 ' Lấy dữ liệu ra biến
-Dim productName, productCode, brandName, salePrice, originalPrice, detailDescription
+Dim productName, productCode, salePrice, originalPrice, detailDescription
 Dim categoryName, categoryId, material, fitType, origin
 
 If Not rsProduct.EOF Then
     ' Lấy dữ liệu thô từ DB, chưa in ra màn hình vội
     productName = rsProduct("ProductName")
     productCode = rsProduct("ProductCode")
-    brandName = rsProduct("BrandName")
     categoryName = rsProduct("CategoryName")
     categoryId = rsProduct("CategoryID")
     detailDescription = rsProduct("DetailDescription")
@@ -338,7 +336,6 @@ End If
                 <ul>
                     <li><strong>Mã sản phẩm:</strong> <% WriteUTF8(productCode) %></li>
                     <li><strong>Tên sản phẩm:</strong> <% WriteUTF8(productName) %></li>
-                    <li><strong>Thương hiệu:</strong> <% WriteUTF8(brandName) %></li>
                     <% If categoryName <> "" Then %>
                     <li><strong>Danh mục:</strong> <% WriteUTF8(categoryName) %></li>
                     <% End If %>
@@ -462,6 +459,7 @@ function addToCart() {
         window.location.href = url;
     }
     </script>
+    <script src="../../FE/js/header-footer.js"></script>
 </body>
 </html>
 <%

@@ -197,7 +197,7 @@ rsList.Open sqlList, conn
         loadComponent("header", "../FE/customer/component/header.html");
         loadComponent("footer", "../FE/customer/component/footer.html");
     </script>
-
+    <script src="../../FE/js/header-footer.js"></script>
 </body>
 </html>
 <%

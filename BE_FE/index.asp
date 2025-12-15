@@ -4,7 +4,6 @@
 ' 1. Cấu hình Tiếng Việt và bộ đệm
 Response.Buffer = True
 Session.CodePage = 65001
-Response.CodePage = 65001
 Response.CharSet = "UTF-8"
 %>
 <%
@@ -34,8 +33,8 @@ Set rsNew = conn.Execute(sqlNew)
   
   <link rel="stylesheet" href="../../assets/css/base.css">
   <link rel="stylesheet" href="../../assets/css/main.css">
-  <link rel="stylesheet" href="../../assets/css/header-footer.css">
   <link rel="stylesheet" href="../../assets/css/product_list.css">
+  <link rel="stylesheet" href="../../assets/css/header-footer.css">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -115,18 +114,7 @@ Set rsNew = conn.Execute(sqlNew)
       @media (max-width: 992px) { .home-product-grid { grid-template-columns: repeat(3, 1fr); } }
       @media (max-width: 768px) { .home-product-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
 
-      /* Style cho danh mục (Slider ngang) */
-      .cat-item-card {
-          flex: 0 0 auto; /* Không co giãn */
-          padding: 10px 20px;
-          background: #f5f5f5;
-          border-radius: 20px;
-          border: 1px solid #ddd;
-          white-space: nowrap;
-      }
-      .cat-item-card:hover { background: #000; }
-      .cat-item-card a { text-decoration: none; color: #333; font-weight: 500; font-size: 14px; display: block; }
-      .cat-item-card:hover a { color: #fff; }
+      
   </style>
 </head>
 
@@ -135,106 +123,202 @@ Set rsNew = conn.Execute(sqlNew)
     <div id="header"></div>
     
     <div class="body">
-      <div class="banner-slider">
-        <div class="slides">
-          <img src="/assets/img/slide_1_img.jpg" class="slide active">
-          <img src="/assets/img/slide_2_img.jpg" class="slide">
-          <img src="/assets/img/slide_3_img.jpg" class="slide">
-          <img src="/assets/img/slide_4_img.jpg" class="slide">
-        </div>
-        <div class="arrow left" id="prevBtn">&#10094;</div>
-        <div class="arrow right" id="nextBtn">&#10095;</div>
-        <div class="dots">
-          <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
-        </div>
-      </div>
-
-      <section class="category-section">
-        <div class="grid">
-          <h1 class="cate-header">DANH MỤC SẢN PHẨM</h1>
-          <div class="category-container">
-            <div class="category-slider" id="category-slider" style="display: flex; overflow-x: auto; gap: 15px; padding: 10px 0; scrollbar-width: none;">
-                <% 
-                If Not rsCat.EOF Then
-                    Do While Not rsCat.EOF 
-                %>
-                    <div class="cat-item-card">
-                        <a href="products.asp?cat=<%=rsCat("CategoryID")%>">
-                            <%=rsCat("CategoryName")%>
-                        </a>
-                    </div>
-                <% 
-                        rsCat.MoveNext
-                    Loop
-                End If
-                rsCat.Close
-                Set rsCat = Nothing
-                %>
+        <div class="banner-slider">
+            <div class="slides">
+            <img src="/assets/img/slide_1_img.jpg" class="slide active">
+            <img src="/assets/img/slide_2_img.jpg" class="slide">
+            <img src="/assets/img/slide_3_img.jpg" class="slide">
+            <img src="/assets/img/slide_4_img.jpg" class="slide">
             </div>
-          </div>
+            <div class="arrow left" id="prevBtn">&#10094;</div>
+            <div class="arrow right" id="nextBtn">&#10095;</div>
+            <div class="dots">
+            <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            </div>
         </div>
-      </section>
 
-      <section class="new-arrival-section">
-          <div class="grid">
-              <div class="section-header">
-                  <h2>Sản phẩm mới về</h2>
-                  <img src="https://torano.vn/wp-content/uploads/2019/07/title-line.png" alt="line" style="width:100px;">
-              </div>
-              
-              <div class="home-product-grid">
-                  <% 
-                  If Not rsNew.EOF Then
-                      Do While Not rsNew.EOF
-                          Dim pID, pName, pPrice, pOldPrice, pImg
-                          pID = rsNew("ProductID")
-                          pName = rsNew("ProductName")
-                          pPrice = rsNew("SalePrice")
-                          pOldPrice = rsNew("OriginalPrice")
-                          
-                          ' Xử lý ảnh null
-                          If IsNull(rsNew("MainImage")) Or rsNew("MainImage") = "" Then
-                              pImg = "images/no-image.jpg"
-                          Else
-                              pImg = rsNew("MainImage")
-                          End If
-                  %>
-                      <div class="product-item">
-                          <div class="product-img">
-                              <a href="product-detail.asp?id=<%=pID%>">
-                                  <img src="<%=pImg%>" alt="<%=pName%>">
-                              </a>
-                              <% If pOldPrice > pPrice Then %>
-                                  <span class="badge-sale">-<%=Int((pOldPrice - pPrice)/pOldPrice * 100)%>%</span>
-                              <% End If %>
-                          </div>
-                          
-                          <div class="product-info">
-                              <h3>
-                                  <a href="product-detail.asp?id=<%=pID%>" title="<%=pName%>"><%=pName%></a>
-                              </h3>
-                              <div class="price-box">
-                                  <span style="font-weight: bold; color: #d0021b; font-size: 16px;"><%=FormatNumber(pPrice, 0)%>₫</span>
-                                  <% If pOldPrice > pPrice Then %>
-                                      <span style="text-decoration: line-through; color: #999; font-size: 13px;"><%=FormatNumber(pOldPrice, 0)%>₫</span>
-                                  <% End If %>
-                              </div>
-                          </div>
-                      </div>
-                  <%
-                          rsNew.MoveNext
-                      Loop
-                  End If
-                  rsNew.Close
-                  Set rsNew = Nothing
-                  %>
-              </div>
-              
-              <div style="text-align: center; margin-bottom: 40px;">
-                  <a href="products.asp" class="btn-view-all" style="padding: 12px 40px; border: 1px solid #000; text-decoration: none; color: #000; font-weight: bold; transition: 0.3s; background: #fff;">XEM TẤT CẢ</a>
-              </div>
-          </div>
-      </section>
+        <div class="product-category-section">
+            <div class="section-header">
+                <h2 class="section-title">DANH MỤC SẢN PHẨM</h2>
+                <div class="navigation-arrows">
+                    <button class="nav-arrow" id="prevBtn-cate" disabled>
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="nav-arrow" id="nextBtn-cate">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="categories-container">
+                <div class="categories-wrapper" id="categoriesWrapper">
+                    <!-- Category 1 -->
+                    <a href="products.html?category=ao-khoac" class="category-card">
+                        <div class="category-image-wrapper">
+                            <img src="../assets/img/home_category_1_img.jpg" alt="Áo Khoác" class="category-image">
+                            <div class="category-info">
+                                <span class="category-name">Áo Khoác</span>
+                                <div class="category-arrow">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Category 2 -->
+                    <a href="products.html?category=bo-thu-dong" class="category-card">
+                        <div class="category-image-wrapper">
+                            <img src="../assets/img/home_category_2_img.jpg" alt="Bộ Thu Đông" class="category-image">
+                            <div class="category-info">
+                                <span class="category-name">Bộ Thu Đông</span>
+                                <div class="category-arrow">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Category 3 -->
+                    <a href="products.html?category=quan-kaki" class="category-card">
+                        <div class="category-image-wrapper">
+                            <img src="../assets/img/home_category_3_img.jpg" alt="Quần Kaki" class="category-image">
+                            <div class="category-info">
+                                <span class="category-name">Quần Kaki</span>
+                                <div class="category-arrow">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Category 4 -->
+                    <a href="products.html?category=quan-jeans" class="category-card">
+                        <div class="category-image-wrapper">
+                            <img src="../assets/img/home_category_4_img.jpg" alt="Quần Jeans" class="category-image">
+                            <div class="category-info">
+                                <span class="category-name">Quần Jeans</span>
+                                <div class="category-arrow">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Category 5 -->
+                    <a href="products.html?category=ao-thun" class="category-card">
+                        <div class="category-image-wrapper">
+                            <img src="../assets/img/home_category_5_img.jpg" alt="Polo" class="category-image">
+                            <div class="category-info">
+                                <span class="category-name">Polo</span>
+                                <div class="category-arrow">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Category 6 -->
+                    <a href="products.html?category=ao-so-mi" class="category-card">
+                        <div class="category-image-wrapper">
+                            <img src="../assets/img/home_category_6_img.jpg" alt="Quần Âu" class="category-image">
+                            <div class="category-info">
+                                <span class="category-name">Quần Âu</span>
+                                <div class="category-arrow">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Category 7 -->
+                    <a href="products.html?category=phu-kien" class="category-card">
+                        <div class="category-image-wrapper">
+                            <img src="../assets/img/home_category_7_img.jpg" alt="Áo Sơ Mi" class="category-image">
+                            <div class="category-info">
+                                <span class="category-name">Áo Sơ Mi</span>
+                                <div class="category-arrow">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Category 8 -->
+                    <a href="products.html?category=giay-dep" class="category-card">
+                        <div class="category-image-wrapper">
+                            <img src="../assets/img/home_category_8_img.jpg" alt="Áo Thun" class="category-image">
+                            <div class="category-info">
+                                <span class="category-name">Áo Thun</span>
+                                <div class="category-arrow">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <section class="new-arrival-section">
+            <div class="grid">
+                <div class="section-header">
+                    <h2>Sản phẩm mới về</h2>
+                    <img src="https://torano.vn/wp-content/uploads/2019/07/title-line.png" alt="line" style="width:100px;">
+                </div>
+                
+                <div class="home-product-grid">
+                    <% 
+                    If Not rsNew.EOF Then
+                        Do While Not rsNew.EOF
+                            Dim pID, pName, pPrice, pOldPrice, pImg
+                            pID = rsNew("ProductID")
+                            pName = rsNew("ProductName")
+                            pPrice = rsNew("SalePrice")
+                            pOldPrice = rsNew("OriginalPrice")
+                            
+                            ' Xử lý ảnh null
+                            If IsNull(rsNew("MainImage")) Or rsNew("MainImage") = "" Then
+                                pImg = "images/no-image.jpg"
+                            Else
+                                pImg = rsNew("MainImage")
+                            End If
+                    %>
+                        <div class="product-item">
+                            <div class="product-img">
+                                <a href="product-detail.asp?id=<%=pID%>">
+                                    <img src="<%=pImg%>" alt="<%=pName%>">
+                                </a>
+                                <% If pOldPrice > pPrice Then %>
+                                    <span class="badge-sale">-<%=Int((pOldPrice - pPrice)/pOldPrice * 100)%>%</span>
+                                <% End If %>
+                            </div>
+                            
+                            <div class="product-info">
+                                <h3>
+                                    <a href="product-detail.asp?id=<%=pID%>" title="<%=pName%>"><%=pName%></a>
+                                </h3>
+                                <div class="price-box">
+                                    <span style="font-weight: bold; color: #d0021b; font-size: 16px;"><%=FormatNumber(pPrice, 0)%>₫</span>
+                                    <% If pOldPrice > pPrice Then %>
+                                        <span style="text-decoration: line-through; color: #999; font-size: 13px;"><%=FormatNumber(pOldPrice, 0)%>₫</span>
+                                    <% End If %>
+                                </div>
+                            </div>
+                        </div>
+                    <%
+                            rsNew.MoveNext
+                        Loop
+                    End If
+                    rsNew.Close
+                    Set rsNew = Nothing
+                    %>
+                </div>
+                
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <a href="products.asp" class="btn-view-all" style="padding: 12px 40px; border: 1px solid #000; text-decoration: none; color: #000; font-weight: bold; transition: 0.3s; background: #fff;">XEM TẤT CẢ</a>
+                </div>
+            </div>
+        </section>
 
     </div>
     
@@ -274,6 +358,8 @@ Set rsNew = conn.Execute(sqlNew)
   </script>
   
   <script src="../../FE/js/index.js"></script>
+  <script src="../../FE/js/header-footer.js"></script>
+  <script src="../../FE/js/category_list.js"></script>
 </body>
 </html>
 <%

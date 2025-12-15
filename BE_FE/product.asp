@@ -5,7 +5,6 @@
 Response.Buffer = True
 Response.Clear
 Session.CodePage = 65001
-Response.CodePage = 65001
 Response.CharSet = "UTF-8"
 %>
 <%

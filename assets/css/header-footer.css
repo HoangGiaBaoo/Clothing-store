@@ -173,7 +173,7 @@
   border-radius: 2px;
   top: 290%;
   right: -60px;
-  z-index: 1;
+  z-index: 300;
   padding: 0;
   width: 280px;
   box-shadow: 0 1px 2px #898888;
@@ -210,6 +210,7 @@
     border-width: 10px 20px;
     border-color: transparent transparent #fff transparent;
     position: absolute;
+    z-index: 300;
     top: -20px;
     right: 50px;
 }

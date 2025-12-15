@@ -410,6 +410,7 @@ End If
             window.location.href = "checkout.asp?note=" + encodeURIComponent(note);
         }
     </script>
+    <script src="../../FE/js/header-footer.js"></script>
 </body>
 </html>
 <%

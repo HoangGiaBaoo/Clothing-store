@@ -4,7 +4,6 @@
 ' 1. Cấu hình Tiếng Việt & Bộ đệm
 Response.Buffer = True
 Session.CodePage = 65001
-Response.CodePage = 65001
 Response.CharSet = "UTF-8"
 %>
 
@@ -180,6 +179,7 @@ End If
         loadComponent("header", "../FE/customer/component/header.html");
         loadComponent("footer", "../FE/customer/component/footer.html");
     </script>
+    <script src="../../FE/js/header-footer.js"></script>
 </body>
 </html>
 
