@@ -358,7 +358,7 @@ End If
     async function loadComponent(id, file) {
             document.getElementById(id).innerHTML = await (await fetch(file)).text();
         }
-        loadComponent("header", "../FE/customer/component/header.html");
+        loadComponent("header", "../FE/customer/component/header.asp");
         loadComponent("footer", "../FE/customer/component/footer.html");
 
     // Thay đổi ảnh chính

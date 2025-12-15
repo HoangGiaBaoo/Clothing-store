@@ -251,7 +251,29 @@
 .icon-info-link {
   text-decoration: none;
 }
-
+    /* Style cho icon giỏ hàng có số */
+    .cart-icon-wrap {
+        position: relative;
+        display: inline-block;
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .cart-badge {
+        position: absolute;
+        top: -8px;    /* Chỉnh vị trí cao thấp */
+        right: -10px; /* Chỉnh vị trí trái phải */
+        background-color: #d0021b; /* Màu đỏ nổi bật */
+        color: white;
+        font-size: 11px;
+        font-weight: bold;
+        height: 18px;
+        width: 18px;
+        line-height: 18px;
+        text-align: center;
+        border-radius: 50%; /* Bo tròn thành hình tròn */
+        border: 1px solid #fff; /* Viền trắng cho tách biệt */
+    }
 
 /* Tổng thể footer */
 footer {

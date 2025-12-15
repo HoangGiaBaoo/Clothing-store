@@ -1,21 +1,24 @@
 <%@LANGUAGE="VBSCRIPT" CODEPAGE="65001"%>
-<!-- #include file="/BE/db/connect.asp" -->
 <%
-' 1. Cấu hình Tiếng Việt & Bộ đệm
+' 1. Cấu hình Tiếng Việt & Bộ đệm (Phải đặt đầu tiên)
 Response.Buffer = True
-Session.CodePage = 65001
-Response.CodePage = 65001
-Response.CharSet = "UTF-8"
-%>
 
+%>
+<!-- #include file="/BE/db/connect.asp" -->
 <%
 ' --- BIẾN LƯU THÔNG BÁO ---
 Dim errorMsg
 errorMsg = ""
 
-' --- BIẾN GIỮ LẠI GIÁ TRỊ FORM (Để không bị mất khi reload) ---
-Dim f_fname, f_lname, f_gender, f_birthday, f_email
+' --- BIẾN GIỮ LẠI GIÁ TRỊ FORM ---
+Dim f_fname, f_lname, f_gender, f_birthday, f_email, f_phone, f_address
 f_gender = "female" ' Mặc định là nữ
+f_fname = ""
+f_lname = ""
+f_email = ""
+f_phone = ""
+f_address = ""
+f_birthday = ""
 
 ' --- XỬ LÝ KHI NGƯỜI DÙNG BẤM ĐĂNG KÝ ---
 If Request.ServerVariables("REQUEST_METHOD") = "POST" Then
@@ -26,21 +29,26 @@ If Request.ServerVariables("REQUEST_METHOD") = "POST" Then
     f_gender   = Request.Form("gender")
     f_birthday = Request.Form("birthday")
     f_email    = Trim(Request.Form("email"))
+    f_phone    = Trim(Request.Form("phone_number"))
+    f_address  = Trim(Request.Form("address"))
+    
     Dim f_pass
     f_pass     = Trim(Request.Form("password"))
 
     ' 2. Validate dữ liệu cơ bản
+    ' (Phone và Address có thể để trống tùy bạn, ở đây tôi để bắt buộc để hỗ trợ Checkout sau này)
     If f_fname = "" Or f_lname = "" Or f_email = "" Or f_pass = "" Or f_birthday = "" Then
-        errorMsg = "Vui lòng điền đầy đủ tất cả các trường bắt buộc!"
+        errorMsg = "Vui lòng điền đầy đủ các trường bắt buộc (Họ tên, Email, Mật khẩu, Ngày sinh)!"
     Else
         ' 3. Làm sạch dữ liệu (Chống SQL Injection cơ bản)
-        f_fname = Replace(f_fname, "'", "''")
-        f_lname = Replace(f_lname, "'", "''")
-        f_email = Replace(f_email, "'", "''")
-        f_pass  = Replace(f_pass, "'", "''")
+        f_fname   = Replace(f_fname, "'", "''")
+        f_lname   = Replace(f_lname, "'", "''")
+        f_email   = Replace(f_email, "'", "''")
+        f_pass    = Replace(f_pass, "'", "''")
+        f_phone   = Replace(f_phone, "'", "''")
+        f_address = Replace(f_address, "'", "''")
         
-        ' --- SỬA LỖI CÚ PHÁP TẠI ĐÂY ---
-        ' Trong VBScript chỉ dùng dấu ngoặc kép, không dùng chữ N ở đây
+        ' Xử lý giới tính sang Tiếng Việt để lưu vào DB
         Dim genderDB
         If f_gender = "male" Then 
             genderDB = "Nam" 
@@ -56,23 +64,30 @@ If Request.ServerVariables("REQUEST_METHOD") = "POST" Then
         If Not rsCheck.EOF Then
             errorMsg = "Email này đã được sử dụng. Vui lòng chọn email khác."
         Else
-            ' 5. THỰC HIỆN ĐĂNG KÝ (INSERT)
-            ' Lưu ý: Chữ N (Unicode) được đặt TRONG câu lệnh SQL chuỗi bên dưới
-            Dim sqlInsert
+        ' 5. THỰC HIỆN ĐĂNG KÝ (INSERT)
+                    Dim sqlInsert
+                    
+                    ' Cấu trúc bảng Users mới
+                    sqlInsert = "INSERT INTO Users (email, password, first_name, last_name, phone_number, address, gender, birthday, role, status) " & _
+                                "VALUES (" & _
+                                "'" & f_email & "', " & _
+                                "N'" & f_pass & "', " & _
+                                "N'" & f_fname & "', " & _
+                                "N'" & f_lname & "', " & _
+                                "'" & f_phone & "', " & _
+                                "N'" & f_address & "', " & _
+                                "N'" & genderDB & "', " & _
+                                "'" & f_birthday & "', " & _
+                                "'customer', 1)"
             
-            ' Cấu trúc bảng users: id, email, password, first_name, last_name, gender, birthday, role, status
-            sqlInsert = "INSERT INTO users (email, password, first_name, last_name, gender, birthday, role, status) " & _
-                        "VALUES ('" & f_email & "', N'" & f_pass & "', N'" & f_fname & "', N'" & f_lname & "', N'" & genderDB & "', '" & f_birthday & "', 'customer', 1)"
-            
-            On Error Resume Next ' Bắt lỗi SQL nếu có (ví dụ sai định dạng ngày tháng)
+            On Error Resume Next 
             conn.Execute sqlInsert
             
             If Err.Number <> 0 Then
                 errorMsg = "Lỗi hệ thống: " & Err.Description
             Else
                 ' Đăng ký thành công -> Chuyển sang trang Login
-                ' Có thể thêm tham số ?msg=registered để bên login hiện thông báo chúc mừng
-                Response.Redirect "login.asp" 
+                Response.Redirect "login.asp?msg=registered" 
             End If
             On Error Goto 0
         End If
@@ -140,6 +155,9 @@ End If
                         <input type="text" name="first_name" placeholder="Họ" required value="<%=f_fname%>">
                         <input type="text" name="last_name" placeholder="Tên" required value="<%=f_lname%>">
 
+                        <input type="text" name="phone_number" placeholder="Số điện thoại" value="<%=f_phone%>">
+                        <input type="text" name="address" placeholder="Địa chỉ" value="<%=f_address%>">
+
                         <div class="gender-selection">
                             <label>
                                 <input type="radio" name="gender" value="female" <%=IfStr(f_gender="female", "checked", "")%>>
@@ -152,7 +170,8 @@ End If
                         </div>
 
                         <div style="margin-bottom: 15px;">
-                            <input type="date" name="birthday" required value="<%=f_birthday%>" style="width: 100%; padding: 20px 12px ; border: 1px solid #ddd; border-radius: 2px; outline:none;font-size: 14px;">
+                            <label style="font-size: 12px; color: #666; display: block; margin-bottom: 5px;">Ngày sinh:</label>
+                            <input type="date" name="birthday" required value="<%=f_birthday%>" style="width: 100%; padding: 15px 12px ; border: 1px solid #ddd; border-radius: 2px; outline:none;font-size: 14px;">
                         </div>
 
                         <input type="email" name="email" placeholder="Email" required value="<%=f_email%>">
@@ -176,20 +195,18 @@ End If
                 if(res.ok) document.getElementById(id).innerHTML = await res.text();
             } catch(e) {}
         }
-        // Kiểm tra lại đường dẫn component Header/Footer
-        loadComponent("header", "../FE/customer/component/header.html");
+        loadComponent("header", "../FE/customer/component/header.asp");
         loadComponent("footer", "../FE/customer/component/footer.html");
     </script>
 </body>
 </html>
 
 <%
-' Hàm hỗ trợ in Checked cho Radio button (Tương tự toán tử 3 ngôi)
+' Hàm hỗ trợ in Checked cho Radio button
 Function IfStr(condition, valTrue, valFalse)
     If condition Then IfStr = valTrue Else IfStr = valFalse
 End Function
 
-' Đóng kết nối
 conn.Close
 Set conn = Nothing
 %>

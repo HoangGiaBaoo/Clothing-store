@@ -1,3 +1,37 @@
+<!-- #include file="../../../BE/db/connect.asp" -->
+<%
+' --- LOGIC ĐẾM GIỎ HÀNG CHO HEADER ---
+Dim headerCartCount
+headerCartCount = 0
+
+' 1. Nếu Session đã có số lượng (do trang khác tính rồi) thì dùng luôn cho nhanh
+If Not IsEmpty(Session("CartCount")) Then
+    headerCartCount = CInt(Session("CartCount"))
+Else
+    ' 2. Nếu Session trống (mới vào web), phải query Database để đếm
+    Dim h_sessID
+    If Not IsEmpty(Session("UserID")) And Session("UserID") <> "" Then
+        h_sessID = Session("UserID")
+    Else
+        h_sessID = Session.SessionID
+    End If
+    
+    ' Chỉ chạy query nếu đã có kết nối CSDL (conn)
+    ' Lưu ý: Đảm bảo trang cha (index.asp, products.asp...) đã include file connect.asp
+    If IsObject(conn) Then
+        Dim rsCount
+        Set rsCount = conn.Execute("SELECT ISNULL(SUM(Quantity), 0) AS Total FROM Cart WHERE SessionID = '" & h_sessID & "'")
+        If Not rsCount.EOF Then
+            headerCartCount = CInt(rsCount("Total"))
+        End If
+        rsCount.Close
+        Set rsCount = Nothing
+        
+        ' Lưu lại vào Session để lần sau đỡ phải query lại
+        Session("CartCount") = headerCartCount
+    End If
+End If
+%>
 <header>
     <div class="header-top">
         <div class="grid">
@@ -19,7 +53,7 @@
     <div class="grid">
         <div class="navbar">
             <div class="navbar__logo">
-                <a href="/FE/customer/index.html"><img class="logo-img" src="/assets/img/logo.png" alt="logo"></a>
+                <a href="index.asp"><img class="logo-img" src="../assets/img/logo.png" alt="logo"></a>
             </div>
             <ul class="menu">
                 <li><a href="#">Sản phẩm mới</a></li>
@@ -86,7 +120,13 @@
                     </div>
                 </li>
                 <li class="icon-list-item">
-                    <i class="icon-list-icon fa-solid fa-cart-shopping"></i>
+                    <a href="cart.asp" class="cart-icon-wrap">
+                        <i class="icon-list-icon fa-solid fa-cart-shopping"></i>
+                        
+                        <% If headerCartCount > 0 Then %>
+                            <span class="cart-badge"><%=headerCartCount%></span>
+                        <% End If %>
+                    </a>
                 </li>
             </ul>
         </div>

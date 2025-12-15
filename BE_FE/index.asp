@@ -3,10 +3,9 @@
 <%
 ' 1. Cấu hình Tiếng Việt và bộ đệm
 Response.Buffer = True
-Session.CodePage = 65001
-Response.CodePage = 65001
-Response.CharSet = "UTF-8"
 %>
+<!-- #include file="/BE/db/connect.asp" -->
+
 <%
 ' --- A. LẤY DANH MỤC SẢN PHẨM (Sắp xếp theo thứ tự hiển thị) ---
 Dim rsCat, sqlCat
@@ -269,7 +268,7 @@ Set rsNew = conn.Execute(sqlNew)
       } catch(e) { console.error(e); }
     }
     // Load Header & Footer
-    loadComponent("header", "../../FE/customer/component/header.html");
+    loadComponent("header", "../../FE/customer/component/header.asp");
     loadComponent("footer", "../../FE/customer/component/footer.html");
   </script>
   
