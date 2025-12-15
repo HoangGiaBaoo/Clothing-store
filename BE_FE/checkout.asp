@@ -1,7 +1,19 @@
-<%@LANGUAGE="VBSCRIPT"%>
+<%@LANGUAGE="VBSCRIPT" CODEPAGE="65001"%>
+<%
+' --- 0. CẤU HÌNH & KIỂM TRA ĐĂNG NHẬP ---
+Response.Buffer = True
+%>
 <!-- #include file="/BE/db/connect.asp" -->
 <%
-' --- HÀM XỬ LÝ TIẾNG VIỆT "BẤT CHẤP" SERVER (Dùng ADODB.Stream) ---
+' CHẶN KHÁCH VÃNG LAI: Nếu chưa đăng nhập -> Về trang Login
+If IsEmpty(Session("UserID")) Or Session("UserID") = "" Then
+    Response.Redirect "login.asp?msg=login_to_checkout&ret=checkout.asp"
+End If
+
+Dim currentSessionID
+currentSessionID = Session("UserID") ' Lấy Giỏ hàng theo ID thành viên
+
+' --- 1. HÀM XỬ LÝ TIẾNG VIỆT (Giữ nguyên của bạn) ---
 Sub WriteUTF8(text)
     If IsNull(text) Or text = "" Then Exit Sub
     
@@ -12,11 +24,9 @@ Sub WriteUTF8(text)
     stream.Charset = "UTF-8"
     stream.WriteText text
     
-    ' Chuyển con trỏ về đầu để đổi sang chế độ Binary
     stream.Position = 0
     stream.Type = 1 ' Binary
     
-    ' BỎ QUA 3 BYTE BOM (EF BB BF) DO ADODB TỰ SINH RA
     If stream.Size > 3 Then
         stream.Position = 3 
         Dim binaryData
@@ -27,14 +37,34 @@ Sub WriteUTF8(text)
     stream.Close
     Set stream = Nothing
 End Sub
-%>
 
-<%
-' --- LOGIC LẤY GIỎ HÀNG (Giữ nguyên logic của bạn) ---
-Dim currentSessionID
-currentSessionID = Session.SessionID
+' --- 2. LẤY THÔNG TIN KHÁCH HÀNG (ĐỂ ĐIỀN SẴN FORM) ---
+Dim myName, myPhone, myAddress, myEmail
+myName = ""
+myPhone = ""
+myAddress = ""
+myEmail = ""
 
-' Kiểm tra giỏ hàng
+' Query lấy thông tin người dùng
+Dim rsUser
+' Lưu ý: Hãy đảm bảo bảng Users của bạn có các cột phone_number, address. Nếu chưa có thì nó sẽ để trống.
+' Tôi dùng ISNULL để tránh lỗi nếu cột đó chưa có dữ liệu
+Set rsUser = conn.Execute("SELECT first_name, last_name, email, phone_number, address FROM users WHERE id = " & currentSessionID)
+
+If Not rsUser.EOF Then
+    myName = Trim(rsUser("last_name") & " " & rsUser("first_name"))
+    myEmail = rsUser("email")
+    
+    If Not IsNull(rsUser("phone_number")) Then myPhone = rsUser("phone_number")
+    If Not IsNull(rsUser("address")) Then myAddress = rsUser("address")
+End If
+rsUser.Close
+Set rsUser = Nothing
+
+
+' --- 3. LOGIC LẤY GIỎ HÀNG ---
+
+' Kiểm tra giỏ hàng có trống không
 Dim rsCount
 Set rsCount = conn.Execute("SELECT COUNT(*) FROM Cart WHERE SessionID = '" & currentSessionID & "'")
 If rsCount(0) = 0 Then
@@ -54,7 +84,7 @@ rsSum.Close
 If totalAmount >= 500000 Then shippingFee = 0 Else shippingFee = 30000
 finalAmount = totalAmount + shippingFee
 
-' Lấy danh sách (Lưu ý: Không cần xử lý Unicode ở câu SQL, chỉ cần lấy dữ liệu thô)
+' Lấy danh sách sản phẩm
 Dim sqlList, rsList
 sqlList = "SELECT c.Quantity, c.ColorName, c.SizeName, p.ProductName, p.SalePrice, " & _
           "(SELECT TOP 1 ImageURL FROM ProductImages WHERE ProductID = p.ProductID AND IsMainImage = 1) AS MainImage " & _
@@ -98,22 +128,25 @@ rsList.Open sqlList, conn
 
         <form action="process-checkout.asp" method="POST" id="checkoutForm">
             <h3>Thông tin giao hàng</h3>
+            
             <div class="form-group">
-                <input type="text" name="fullName" placeholder="Họ và tên" required class="inp-text">
+                <input type="text" name="fullName" placeholder="Họ và tên" required class="inp-text" value="<%=myName%>">
             </div>
             <div class="form-row">
                 <div class="form-group half">
-                    <input type="email" name="email" placeholder="Email" class="inp-text">
+                    <input type="email" name="email" placeholder="Email" class="inp-text" value="<%=myEmail%>">
                 </div>
                 <div class="form-group half">
-                    <input type="text" name="phone" placeholder="Số điện thoại" required class="inp-text">
+                    <input type="text" name="phone" placeholder="Số điện thoại" required class="inp-text" value="<%=myPhone%>">
                 </div>
             </div>
             <div class="form-group">
-                <input type="text" name="address" placeholder="Địa chỉ" required class="inp-text">
+                <input type="text" name="address" placeholder="Địa chỉ" required class="inp-text" value="<%=myAddress%>">
             </div>
+            
+            <% Dim noteFromCart : noteFromCart = Request.QueryString("note") %>
             <div class="form-group">
-                <textarea name="note" placeholder="Ghi chú" class="inp-text" style="height: 80px"></textarea>
+                <textarea name="note" placeholder="Ghi chú" class="inp-text" style="height: 80px"><%=noteFromCart%></textarea>
             </div>
 
             <h3>Phương thức vận chuyển</h3>
@@ -149,7 +182,11 @@ rsList.Open sqlList, conn
             <% 
             Dim pImg
             Do While Not rsList.EOF 
-                If IsNull(rsList("MainImage")) Then pImg = "images/no-image.jpg" Else pImg = rsList("MainImage")
+                If IsNull(rsList("MainImage")) Or rsList("MainImage") = "" Then 
+                    pImg = "images/no-image.jpg" 
+                Else 
+                    pImg = rsList("MainImage")
+                End If
             %>
             <div class="item">
                 <div class="item-img">
@@ -192,9 +229,14 @@ rsList.Open sqlList, conn
 <div id="footer"></div>
     <script>
         async function loadComponent(id, file) {
-            document.getElementById(id).innerHTML = await (await fetch(file)).text();
+            try {
+                let response = await fetch(file);
+                if (response.ok) {
+                    document.getElementById(id).innerHTML = await response.text();
+                }
+            } catch (e) { console.error("Error loading component:", e); }
         }
-        loadComponent("header", "../FE/customer/component/header.html");
+        loadComponent("header", "../FE/customer/component/header.asp");
         loadComponent("footer", "../FE/customer/component/footer.html");
     </script>
     <script src="../../FE/js/header-footer.js"></script>

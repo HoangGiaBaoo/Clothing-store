@@ -3,9 +3,9 @@
 <%
 ' 1. Cấu hình Tiếng Việt và bộ đệm
 Response.Buffer = True
-Session.CodePage = 65001
-Response.CharSet = "UTF-8"
 %>
+<!-- #include file="/BE/db/connect.asp" -->
+
 <%
 ' --- A. LẤY DANH MỤC SẢN PHẨM (Sắp xếp theo thứ tự hiển thị) ---
 Dim rsCat, sqlCat
@@ -342,7 +342,61 @@ Set rsNew = conn.Execute(sqlNew)
     </div>
     
     <div id="footer"></div>
+    <!-- SEARCH OVERLAY -->
+    <div class="sidebar-search">
+      <div class="sitenav-search">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-3 logo">
 
+              <div class="wrap-logo">
+                <a href="https://torano.vn" itemprop="url">
+                  <img itemprop="logo" src="//theme.hstatic.net/200000690725/1001078549/14/logo.png?v=1017" alt="Torano"
+                    class="img-responsive logoimg lazyload" />
+                </a>
+              </div>
+
+            </div>
+            <div class="col-lg-6 search-form wpo-wrapper-search">
+              <form action="/search" class="searchform searchform-categoris ultimate-search">
+                <div class="wpo-search-inner">
+                  <input type="hidden" name="type" value="product" />
+                  <input required id="inputSearchAuto" class="input-search" name="q" maxlength="40" autocomplete="off"
+                    type="text" size="20" placeholder="Tìm kiếm sản phẩm...">
+                </div>
+                <button type="submit" class="btn-search btn" aria-label="button search">
+                  <svg version="1.1" class="svg search" xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 27"
+                    style="enable-background:new 0 0 24 27;" xml:space="preserve">
+                    <path
+                      d="M10,2C4.5,2,0,6.5,0,12s4.5,10,10,10s10-4.5,10-10S15.5,2,10,2z M10,19c-3.9,0-7-3.1-7-7s3.1-7,7-7s7,3.1,7,7S13.9,19,10,19z">
+                    </path>
+                    <rect x="17" y="17" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -9.2844 19.5856)" width="4"
+                      height="8"></rect>
+                  </svg>
+                </button>
+              </form>
+              <div id="ajaxSearchResults" class="smart-search-wrapper ajaxSearchResults">
+                <div class="resultsContent"></div>
+                <div class="search-suggest">
+                  <ul>
+                    <li class="item item-suggest">Polo, Short Đũi, TShirt </li>
+
+                    <li class="item"><a href="/" title="Text 1">Text 1,</a></li>
+                    <li class="item"><a href="/" title="Text 2">Text 2,</a></li>
+                    <li class="item"><a href="/" title="Text 3">Text 3</a></li>
+
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 actions">
+              <div class="btn-close-search" aria-label="close-search"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   
   <script>
@@ -353,7 +407,7 @@ Set rsNew = conn.Execute(sqlNew)
       } catch(e) { console.error(e); }
     }
     // Load Header & Footer
-    loadComponent("header", "../../FE/customer/component/header.html");
+    loadComponent("header", "../../FE/customer/component/header.asp");
     loadComponent("footer", "../../FE/customer/component/footer.html");
   </script>
   
