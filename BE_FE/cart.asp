@@ -108,14 +108,13 @@ End If
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <link rel="stylesheet" href="../../assets/css/base.css">
     <link rel="stylesheet" href="../../assets/css/main.css">
-    <link rel="stylesheet" href="../../assets/css/header-footer.css">
-    <link rel="stylesheet" href="../../assets/css/register.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="/assets/fonts/fontawesome-free-6.7.2-web/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../../assets/css/chiTietSanPham.css">
     <link rel="stylesheet" href="../../assets/css/cart.css">
+    <link rel="stylesheet" href="../../assets/css/header-footer.css">
     
     <style>
         .cart-icon-wrap {

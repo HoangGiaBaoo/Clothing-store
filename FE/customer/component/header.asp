@@ -112,8 +112,8 @@ End If
                             <p class="icon-txt">THÔNG TIN TÀI KHOẢN</p>
                         </div>
                         <ul class="icon-info">
-                        <li class="icon-info-name"><span>HOANG GIA BAO</span></li>
-                        <a href="" class="icon-info-link"><li class="icon-info-item">Tài khoản của tôi</li></a>
+                        <li class="icon-info-name"><span><%=Session("FullName")%></span></li>
+                        <a href="account.asp" class="icon-info-link"><li class="icon-info-item">Tài khoản của tôi</li></a>
                         <a href="" class="icon-info-link"><li class="icon-info-item">Danh sách địa chỉ</li></a>
                         <a href="logout.asp" class="icon-info-link"><li class="icon-info-item">Đăng xuất</li></a>
                     </ul>

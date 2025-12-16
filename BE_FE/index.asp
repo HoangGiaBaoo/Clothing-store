@@ -259,69 +259,56 @@ Set rsNew = conn.Execute(sqlNew)
             </div>
         </div>
 
-        <section class="new-arrival-section">
+        <div class="promo-section">
             <div class="grid">
-                <div class="section-header">
-                    <h2>Sản phẩm mới về</h2>
-                    <img src="https://torano.vn/wp-content/uploads/2019/07/title-line.png" alt="line" style="width:100px;">
-                </div>
-                
-                <div class="home-product-grid">
-                    <% 
-                    If Not rsNew.EOF Then
-                        Do While Not rsNew.EOF
-                            Dim pID, pName, pPrice, pOldPrice, pImg
-                            pID = rsNew("ProductID")
-                            pName = rsNew("ProductName")
-                            pPrice = rsNew("SalePrice")
-                            pOldPrice = rsNew("OriginalPrice")
-                            
-                            ' Xử lý ảnh null
-                            If IsNull(rsNew("MainImage")) Or rsNew("MainImage") = "" Then
-                                pImg = "images/no-image.jpg"
-                            Else
-                                pImg = rsNew("MainImage")
-                            End If
-                    %>
-                        <div class="product-item">
-                            <div class="product-img">
-                                <a href="product-detail.asp?id=<%=pID%>">
-                                    <img src="<%=pImg%>" alt="<%=pName%>">
-                                </a>
-                                <% If pOldPrice > pPrice Then %>
-                                    <span class="badge-sale">-<%=Int((pOldPrice - pPrice)/pOldPrice * 100)%>%</span>
-                                <% End If %>
-                            </div>
-                            
-                            <div class="product-info">
-                                <h3>
-                                    <a href="product-detail.asp?id=<%=pID%>" title="<%=pName%>"><%=pName%></a>
-                                </h3>
-                                <div class="price-box">
-                                    <span style="font-weight: bold; color: #d0021b; font-size: 16px;"><%=FormatNumber(pPrice, 0)%>₫</span>
-                                    <% If pOldPrice > pPrice Then %>
-                                        <span style="text-decoration: line-through; color: #999; font-size: 13px;"><%=FormatNumber(pOldPrice, 0)%>₫</span>
-                                    <% End If %>
-                                </div>
-                            </div>
-                        </div>
-                    <%
-                            rsNew.MoveNext
-                        Loop
-                    End If
-                    rsNew.Close
-                    Set rsNew = Nothing
-                    %>
-                </div>
-                
-                <div style="text-align: center; margin-bottom: 40px;">
-                    <a href="products.asp" class="btn-view-all" style="padding: 12px 40px; border: 1px solid #000; text-decoration: none; color: #000; font-weight: bold; transition: 0.3s; background: #fff;">XEM TẤT CẢ</a>
+                <div class="section-header-promo">
+                <h2 class="section-title-promo">Sản phẩm khuyến mãi</h2>
+                <div class="nav-arrows-promo">
+                    <button class="nav-arrow-promo" id="scrollLeft">←</button>
+                    <button class="nav-arrow-promo" id="scrollRight">→</button>
                 </div>
             </div>
-        </section>
+
+            <div class="products-container" id="productsContainer">
+                <div class="products-grid" id="productsGrid">
+                    <div class="loading">Đang tải sản phẩm...</div>
+            </div>
+            </div>
+        </div>
+
+        <button class="view-all-btn">Xem tất cả sản phẩm khuyến mãi</button>
+    </div>
 
     </div>
-    
+    <div class="a1-wrap">
+        <img src="../assets/img/a1.png" alt="" class="a1-img">
+    </div>
+    <div class="featured-category-wrapper">
+        <div class="grid">
+            <!-- Category Navigation -->
+        <nav class="featured-cat-nav">
+            <button class="featured-cat-tab-btn is-active" data-category-id="1">
+                Đồ Thu Đông
+            </button>
+            <button class="featured-cat-tab-btn" data-category-id="2">
+                Đồ Công Sở
+            </button>
+            <button class="featured-cat-tab-btn" data-category-id="3">
+                Đồ Thể Thao
+            </button>
+        </nav>
+
+        <!-- Products Grid -->
+        <div class="featured-products-grid" id="featuredProductsGrid">
+            <div class="featured-loading-state">Đang tải sản phẩm...</div>
+        </div>
+
+        <!-- View All Button -->
+        <button class="featured-view-all-cta" id="featuredViewAllBtn">
+            Xem tất cả Đồ Thu Đông
+        </button>
+        </div>
+    </div>
     <div class="footer-top">
       <div class="footer-item">
         <div class="icon"><i class="fa-solid fa-truck-fast" style="font-size: 24px;"></i></div>
@@ -342,62 +329,7 @@ Set rsNew = conn.Execute(sqlNew)
     </div>
     
     <div id="footer"></div>
-    <!-- SEARCH OVERLAY -->
-    <div class="sidebar-search">
-      <div class="sitenav-search">
-        <div class="container">
-          <div class="row">
-            <div class="col-lg-3 logo">
-
-              <div class="wrap-logo">
-                <a href="https://torano.vn" itemprop="url">
-                  <img itemprop="logo" src="//theme.hstatic.net/200000690725/1001078549/14/logo.png?v=1017" alt="Torano"
-                    class="img-responsive logoimg lazyload" />
-                </a>
-              </div>
-
-            </div>
-            <div class="col-lg-6 search-form wpo-wrapper-search">
-              <form action="/search" class="searchform searchform-categoris ultimate-search">
-                <div class="wpo-search-inner">
-                  <input type="hidden" name="type" value="product" />
-                  <input required id="inputSearchAuto" class="input-search" name="q" maxlength="40" autocomplete="off"
-                    type="text" size="20" placeholder="Tìm kiếm sản phẩm...">
-                </div>
-                <button type="submit" class="btn-search btn" aria-label="button search">
-                  <svg version="1.1" class="svg search" xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 27"
-                    style="enable-background:new 0 0 24 27;" xml:space="preserve">
-                    <path
-                      d="M10,2C4.5,2,0,6.5,0,12s4.5,10,10,10s10-4.5,10-10S15.5,2,10,2z M10,19c-3.9,0-7-3.1-7-7s3.1-7,7-7s7,3.1,7,7S13.9,19,10,19z">
-                    </path>
-                    <rect x="17" y="17" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -9.2844 19.5856)" width="4"
-                      height="8"></rect>
-                  </svg>
-                </button>
-              </form>
-              <div id="ajaxSearchResults" class="smart-search-wrapper ajaxSearchResults">
-                <div class="resultsContent"></div>
-                <div class="search-suggest">
-                  <ul>
-                    <li class="item item-suggest">Polo, Short Đũi, TShirt </li>
-
-                    <li class="item"><a href="/" title="Text 1">Text 1,</a></li>
-                    <li class="item"><a href="/" title="Text 2">Text 2,</a></li>
-                    <li class="item"><a href="/" title="Text 3">Text 3</a></li>
-
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-3 actions">
-              <div class="btn-close-search" aria-label="close-search"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+</div>
   
   <script>
     async function loadComponent(id, file) {

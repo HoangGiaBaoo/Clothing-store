@@ -1,696 +1,753 @@
+<%@LANGUAGE="VBSCRIPT" CODEPAGE="65001"%>
+<% Response.CharSet = "UTF-8" %>
+<!-- #include file="/BE/db/connect.asp" -->
+<%
+' Kiểm tra đăng nhập
+If Session("UserID") = "" Or Not IsNumeric(Session("UserID")) Then
+    Response.Redirect "login.asp"
+    Response.End
+End If
+
+Dim userId : userId = CLng(Session("UserID"))
+
+' Lấy thông tin user
+Dim sqlUser, rsUser
+sqlUser = "SELECT * FROM users WHERE id = " & userId
+Set rsUser = conn.Execute(sqlUser)
+
+If rsUser.EOF Then
+    Response.Redirect "login.asp"
+    Response.End
+End If
+
+Dim firstName, lastName, email, phone, address
+firstName = rsUser("first_name")
+lastName = rsUser("last_name")
+email = rsUser("email")
+phone = rsUser("phone_number")
+address = rsUser("address")
+rsUser.Close
+
+' Lấy đơn hàng
+Dim sqlOrders, rsOrders
+Dim orderStatus : orderStatus = Request.QueryString("status")
+If orderStatus = "" Then orderStatus = "all"
+
+Select Case orderStatus
+    Case "pending"
+        sqlOrders = "SELECT * FROM Orders WHERE UserID = " & userId & " AND Status = 1 ORDER BY OrderDate DESC"
+    Case "shipping"
+        sqlOrders = "SELECT * FROM Orders WHERE UserID = " & userId & " AND Status = 2 ORDER BY OrderDate DESC"
+    Case "completed"
+        sqlOrders = "SELECT * FROM Orders WHERE UserID = " & userId & " AND Status = 3 ORDER BY OrderDate DESC"
+    Case "cancelled"
+        sqlOrders = "SELECT * FROM Orders WHERE UserID = " & userId & " AND Status = 0 ORDER BY OrderDate DESC"
+    Case Else ' all
+        sqlOrders = "SELECT * FROM Orders WHERE UserID = " & userId & " ORDER BY OrderDate DESC"
+End Select
+
+Set rsOrders = conn.Execute(sqlOrders)
+%>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Tài Khoản</title>
+    <title>Tài khoản của bạn - TORANO</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="../../assets/css/base.css">
+    <link rel="stylesheet" href="../../assets/css/main.css">
+    <link rel="stylesheet" href="../../assets/css/header-footer.css">
+    <link rel="stylesheet" href="/assets/fonts/fontawesome-free-6.7.2-web/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+
+        .page-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 40px;
+            position: relative;
+            padding-bottom: 15px;
         }
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            padding: 20px;
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: #333;
         }
 
-        .container {
+        .account-container {
             max-width: 1200px;
             margin: 0 auto;
             display: flex;
-            gap: 20px;
+            gap: 30px;
         }
 
-        .sidebar {
-            width: 250px;
+        /* Sidebar */
+        .account-sidebar {
+            flex: 0 0 250px;
             background: white;
-            padding: 20px;
+            padding: 20px 0;
             border-radius: 8px;
             height: fit-content;
         }
 
+        .sidebar-title {
+            font-size: 16px;
+            font-weight: 600;
+            padding: 0 20px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            text-transform: uppercase;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 10px 0;
+        }
+
         .sidebar-item {
-            padding: 12px 15px;
-            margin-bottom: 5px;
+            padding: 12px 20px;
             cursor: pointer;
-            border-radius: 5px;
-            transition: all 0.3s;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #666;
+            font-size: 1.4rem;
         }
 
         .sidebar-item:hover {
-            background-color: #fee;
-            color: #e53935;
+            background: #f5f5f5;
+            color: #333;
         }
 
         .sidebar-item.active {
-            color: #e53935;
-            font-weight: bold;
+            background: #f0f0f0;
+            color: #333;
+            font-weight: 600;
+            border-left: 3px solid #333;
         }
 
-        .sidebar-title {
-            font-weight: bold;
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-
-        .sub-menu {
-            margin-left: 15px;
-        }
-
-        .content {
+        /* Main Content */
+        .account-content {
             flex: 1;
             background: white;
             padding: 30px;
             border-radius: 8px;
+            min-height: 500px;
+            font-size: 1.6rem;
         }
 
-        .content-title {
-            font-size: 24px;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 15px;
-        }
-
-        .profile-section {
+        .content-section {
             display: none;
         }
 
-        .profile-section.active,
-        .address-section.active,
-        .orders-section.active {
+        .content-section.active {
             display: block;
         }
 
-        .form-group {
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
             margin-bottom: 20px;
-            display: flex;
-            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
         }
 
-        .form-group label {
-            width: 150px;
-            font-weight: 500;
-        }
-
-        .form-group input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            max-width: 500px;
-        }
-
-        .form-group select {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        .avatar-section {
-            display: flex;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .avatar-img {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 20px;
-            border: 2px solid #ddd;
-        }
-
-        .btn-select-image {
-            padding: 8px 16px;
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .btn-select-image:hover {
-            background-color: #f5f5f5;
-        }
-
-        .btn-save {
-            padding: 10px 30px;
-            background-color: #e53935;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-
-        .btn-save:hover {
-            background-color: #c62828;
-        }
-
-        .address-section {
-            display: none;
-        }
-
-        .address-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .btn-add-address {
-            padding: 10px 20px;
-            background-color: #e53935;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .btn-add-address:hover {
-            background-color: #c62828;
-        }
-
-        .address-item {
-            border: 1px solid #ddd;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-        }
-
-        .address-name {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .address-phone {
-            color: #666;
-            margin-bottom: 10px;
-        }
-
-        .address-detail {
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .address-badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border: 1px solid #e53935;
-            color: #e53935;
-            border-radius: 3px;
-            font-size: 12px;
-            margin-right: 10px;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            width: 90%;
+        /* Profile Section */
+        .info-grid {
+            display: grid;
+            gap: 15px;
             max-width: 600px;
         }
 
-        .modal-title {
-            font-size: 20px;
-            margin-bottom: 20px;
+        .info-row {
+            display: flex;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
         }
 
-        .modal-form-group {
-            margin-bottom: 15px;
-        }
-
-        .modal-form-group label {
-            display: block;
-            margin-bottom: 5px;
+        .info-label {
+            flex: 0 0 150px;
+            color: #666;
             font-weight: 500;
         }
 
-        .modal-form-group input,
-        .modal-form-group select,
-        .modal-form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
+        .info-value {
+            flex: 1;
+            color: #333;
+        }
+
+        .btn-view-address {
+            display: inline-block;
+            padding: 8px 20px;
+            background: white;
+            border: 1px solid #333;
+            color: #333;
+            text-decoration: none;
             border-radius: 4px;
-        }
-
-        .modal-buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .btn-cancel {
-            padding: 10px 20px;
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .btn-submit {
-            padding: 10px 20px;
-            background-color: #e53935;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .orders-section {
-            display: none;
-        }
-
-        .order-tabs {
-            display: flex;
-            border-bottom: 2px solid #eee;
-            margin-bottom: 20px;
-        }
-
-        .order-tab {
-            padding: 15px 30px;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            margin-bottom: -2px;
+            margin-top: 15px;
             transition: all 0.3s;
         }
 
+        .btn-view-address:hover {
+            background: #333;
+            color: white;
+        }
+
+        /* Orders Section */
+        .orders-tabs {
+            display: flex;
+            gap: 30px;
+            border-bottom: 2px solid #f0f0f0;
+            margin-bottom: 30px;
+        }
+
+        .order-tab {
+            padding: 12px 0;
+            cursor: pointer;
+            color: #666;
+            font-weight: 500;
+            position: relative;
+            transition: color 0.2s;
+        }
+
         .order-tab:hover {
-            color: #e53935;
+            color: #333;
         }
 
         .order-tab.active {
-            color: #e53935;
-            border-bottom-color: #e53935;
+            color: #333;
+            font-weight: 600;
         }
 
-        .order-content {
-            display: none;
+        .order-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #333;
         }
 
-        .order-content.active {
-            display: block;
+        /* Order Table */
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        .order-item {
-            border: 1px solid #ddd;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-radius: 8px;
+        .orders-table thead {
+            background: #f9f9f9;
         }
 
-        .order-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
+        .orders-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .orders-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #666;
+        }
+
+        .orders-table tbody tr {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .orders-table tbody tr:hover {
+            background: #fafafa;
+        }
+
+        .order-id {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .order-amount {
+            color: #333;
+            font-weight: 600;
         }
 
         .order-status {
-            color: #e53935;
-            font-weight: bold;
-        }
-
-        .order-product {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .order-product img {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        .order-product-info {
-            flex: 1;
-        }
-
-        .order-product-name {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 13px;
             font-weight: 500;
-            margin-bottom: 5px;
         }
 
-        .order-product-variant {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 5px;
+        .status-pending {
+            background: #fff3e0;
+            color: #f57c00;
         }
 
-        .order-product-price {
-            font-weight: bold;
+        .status-shipping {
+            background: #e3f2fd;
+            color: #1976d2;
         }
 
-        .order-total {
-            text-align: right;
-            font-size: 18px;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
+        .status-completed {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .status-cancelled {
+            background: #ffebee;
+            color: #d32f2f;
         }
 
         .empty-message {
             text-align: center;
-            padding: 50px;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        /* Logout */
+        .btn-logout {
+            width: 100%;
+            padding: 12px;
+            background: #e53935;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #c62828;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .account-container {
+                flex-direction: column;
+            }
+
+            .account-sidebar {
+                flex: none;
+            }
+
+            .orders-table {
+                font-size: 14px;
+            }
+
+            .orders-table th,
+            .orders-table td {
+                padding: 10px 8px;
+            }
+        }
+        /* Password Form */
+        .password-form {
+            max-width: 500px;
+        }
+
+        .form-group-password {
+            margin-bottom: 20px;
+        }
+
+        .form-group-password label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group-password input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-group-password input:focus {
+            outline: none;
+            border-color: #333;
+        }
+
+        .form-group-password small {
+            display: block;
+            margin-top: 5px;
+            font-size: 12px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-save-password {
+            padding: 10px 30px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-save-password:hover {
+            background: #000;
+        }
+
+        .btn-cancel-password {
+            padding: 10px 30px;
+            background: white;
             color: #666;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-cancel-password:hover {
+            border-color: #333;
+            color: #333;
+        }
+
+        .password-message {
+            margin-top: 20px;
+            padding: 12px 15px;
+            border-radius: 4px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .password-message.success {
+            display: block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+        }
+
+        .password-message.error {
+            display: block;
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div id="header"></div>
+
+    <h1 class="page-title">Tài khoản của bạn</h1>
+
+    <div class="account-container">
         <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-title">Tài Khoản Của Tôi</div>
-            <div class="sub-menu">
-                <div class="sidebar-item active" data-section="profile">Hồ Sơ</div>
-                <div class="sidebar-item" data-section="address">Địa Chỉ</div>
-                <div class="sidebar-item" data-section="password">Đổi Mật Khẩu</div>
-            </div>
-            <div class="sidebar-item" data-section="orders">Đơn Mua</div>
+        <div class="account-sidebar">
+            <div class="sidebar-title">Tài khoản</div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item active" data-section="profile">
+                    <span>○</span> Thông tin tài khoản
+                </li>
+                <li class="sidebar-item" data-section="password">
+                    <span>○</span> Đổi mật khẩu
+                </li>
+                <li class="sidebar-item" data-section="orders">
+                    <span>○</span> Đơn mua
+                </li>
+                <li class="sidebar-item" onclick="logout()">
+                    <span>○</span> Đăng xuất
+                </li>
+            </ul>
         </div>
 
         <!-- Main Content -->
-        <div class="content">
+        <div class="account-content">
             <!-- Profile Section -->
-            <div class="profile-section active" id="profile">
-                <h2 class="content-title">Hồ Sơ Của Tôi</h2>
-                <p style="color: #666; margin-bottom: 30px;">Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
-
-                <div class="avatar-section">
-                    <img src="https://via.placeholder.com/100" alt="Avatar" class="avatar-img" id="avatarPreview">
-                    <div>
-                        <input type="file" id="avatarInput" accept="image/*" style="display: none;">
-                        <button class="btn-select-image" onclick="document.getElementById('avatarInput').click()">Chọn Ảnh</button>
-                        <p style="color: #999; font-size: 12px; margin-top: 10px;">Dung lượng file tối đa 1 MB<br>Định dạng: .JPEG, .PNG</p>
+            <div class="content-section active" id="profile">
+                <h2 class="section-title">Thông tin tài khoản</h2>
+                <div class="info-grid">
+                    <div class="info-row">
+                        <div class="info-label">Họ và tên:</div>
+                        <div class="info-value"><%=firstName%> <%=lastName%></div>
                     </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Tên đăng nhập</label>
-                    <input type="text" value="do.anh205" disabled>
-                </div>
-
-                <div class="form-group">
-                    <label>Tên</label>
-                    <input type="text" value="jasmineiz" id="userName">
-                </div>
-
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" value="ng***********@gmail.com">
-                    <button class="btn-select-image" style="margin-left: 10px;">Thay Đổi</button>
-                </div>
-
-                <div class="form-group">
-                    <label>Số điện thoại</label>
-                    <input type="text" value="*********06">
-                    <button class="btn-select-image" style="margin-left: 10px;">Thay Đổi</button>
-                </div>
-
-                <div class="form-group">
-                    <label>Giới tính</label>
-                    <div>
-                        <input type="radio" name="gender" value="male"> Nam
-                        <input type="radio" name="gender" value="female" checked style="margin-left: 20px;"> Nữ
-                        <input type="radio" name="gender" value="other" style="margin-left: 20px;"> Khác
+                    <div class="info-row">
+                        <div class="info-label">Email:</div>
+                        <div class="info-value"><%=email%></div>
                     </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Ngày sinh</label>
-                    <input type="text" value="**//**/1994">
-                    <button class="btn-select-image" style="margin-left: 10px;">Thay Đổi</button>
-                </div>
-
-                <button class="btn-save">Lưu</button>
-            </div>
-
-            <!-- Address Section -->
-            <div class="address-section" id="address">
-                <div class="address-header">
-                    <h2 class="content-title" style="margin: 0;">Địa chỉ của tôi</h2>
-                    <button class="btn-add-address" onclick="openAddressModal()">+ Thêm địa chỉ mới</button>
-                </div>
-
-                <h3 style="margin-bottom: 15px;">Địa chỉ</h3>
-                <div id="addressList">
-                    <div class="address-item">
-                        <div class="address-name">Đỗ Ánh | (+84) 357 474 306</div>
-                        <div class="address-detail">Nhà số 17, ngách 99/187, thôn yên kiện<br>Xã Ngọc Hồi, Huyện Thanh Trì, Hà Nội</div>
-                        <span class="address-badge">Mặc định</span>
+                    <div class="info-row">
+                        <div class="info-label">Số điện thoại:</div>
+                        <div class="info-value"><%=phone%></div>
                     </div>
-
-                    <div class="address-item">
-                        <div class="address-name">Đỗ Thị Hồng | (+84) 387 787 238</div>
-                        <div class="address-detail">Công Ty Minh Phú Kho Đại La, Số 03, Đường Phan Trọng Tuệ<br>Xã Tam Hiệp, Huyện Thanh Trì, Hà Nội</div>
-                        <span class="address-badge">Địa chỉ lấy hàng</span>
+                    <div class="info-row">
+                        <div class="info-label">Quốc gia:</div>
+                        <div class="info-value">Vietnam</div>
                     </div>
-
-                    <div class="address-item">
-                        <div class="address-name">Đỗ Mừng | (+84) 975 741 897</div>
-                        <div class="address-detail">Số 15 Ngách 18 Ngõ 47 Khúc Thừa Dụ<br>Phường Vĩnh Niệm, Quận Lê Chân, Hải Phòng</div>
-                    </div>
-
-                    <div class="address-item">
-                        <div class="address-name">Gỗ Bảo | (+84) 862 850 205</div>
-                        <div class="address-detail">Số 7, Ngõ 76 Văn Hồ 3<br>Phường Lê Đại Hành, Quận Hai Bà Trưng, Hà Nội</div>
+                    <div class="info-row">
+                        <div class="info-label">Địa chỉ:</div>
+                        <div class="info-value"><%=address%></div>
                     </div>
                 </div>
             </div>
+
+            <!-- Password Section -->
+            <div class="content-section" id="password">
+                <h2 class="section-title">Đổi mật khẩu</h2>
+                <p style="color: #999; margin-bottom: 20px;">Để bảo mật tài khoản, vui lòng không chia sẻ mật khẩu cho người khác</p>
+
+                <form id="changePasswordForm" class="password-form">
+                    <div class="form-group-password">
+                        <label for="currentPassword">Mật khẩu hiện tại <span style="color: red;">*</span></label>
+                        <input type="password" id="currentPassword" required placeholder="Nhập mật khẩu hiện tại">
+                    </div>
+
+                    <div class="form-group-password">
+                        <label for="newPassword">Mật khẩu mới <span style="color: red;">*</span></label>
+                        <input type="password" id="newPassword" required placeholder="Nhập mật khẩu mới">
+                        <small style="color: #999;">Mật khẩu phải có ít nhất 6 ký tự</small>
+                    </div>
+
+                    <div class="form-group-password">
+                        <label for="confirmPassword">Xác nhận mật khẩu mới <span style="color: red;">*</span></label>
+                        <input type="password" id="confirmPassword" required placeholder="Nhập lại mật khẩu mới">
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-save-password">Xác nhận</button>
+                        <button type="button" class="btn-cancel-password" onclick="resetPasswordForm()">Hủy</button>
+                    </div>
+                </form>
+
+                <div id="passwordMessage" class="password-message"></div>
+            </div>
+
 
             <!-- Orders Section -->
-            <div class="orders-section" id="orders">
-                <h2 class="content-title">Đơn Mua</h2>
-                
-                <div class="order-tabs">
-                    <div class="order-tab active" data-tab="all">Tất cả</div>
-                    <div class="order-tab" data-tab="pending">Chờ xác nhận</div>
-                    <div class="order-tab" data-tab="shipping">Chờ giao hàng</div>
-                    <div class="order-tab" data-tab="completed">Hoàn thành</div>
-                    <div class="order-tab" data-tab="cancelled">Đã hủy</div>
+            <div class="content-section" id="orders">
+                <h2 class="section-title">Danh sách đơn hàng mới nhất</h2>
+
+                <div class="orders-tabs">
+                    <div class="order-tab <%If orderStatus = "all" Then%>active<%End If%>" 
+                         onclick="filterOrders('all')">Tất cả</div>
+                    <div class="order-tab <%If orderStatus = "pending" Then%>active<%End If%>" 
+                         onclick="filterOrders('pending')">Chờ xử lý</div>
+                    <div class="order-tab <%If orderStatus = "shipping" Then%>active<%End If%>" 
+                         onclick="filterOrders('shipping')">Đang giao</div>
+                    <div class="order-tab <%If orderStatus = "completed" Then%>active<%End If%>" 
+                         onclick="filterOrders('completed')">Hoàn tất</div>
+                    <div class="order-tab <%If orderStatus = "cancelled" Then%>active<%End If%>" 
+                         onclick="filterOrders('cancelled')">Đã hủy</div>
                 </div>
 
-                <div class="order-content active" id="all">
-                    <!-- All orders will show here -->
-                </div>
-
-                <div class="order-content" id="pending">
-                    <div class="order-item">
-                        <div class="order-header">
-                            <div class="order-status">🚚 Chờ xác nhận</div>
-                        </div>
-                        <div class="order-product">
-                            <img src="https://via.placeholder.com/80" alt="Product">
-                            <div class="order-product-info">
-                                <div class="order-product-name">Áo Sơ Mi Hoa Cổ Đức Cộc Tay Classic</div>
-                                <div class="order-product-variant">Xám Nhạt - L</div>
-                                <div class="order-product-price">399,000đ x1</div>
-                            </div>
-                        </div>
-                        <div class="order-total">Tổng tiền: <span style="color: #e53935;">399,000đ</span></div>
-                    </div>
-
-                    <div class="order-item">
-                        <div class="order-header">
-                            <div class="order-status">🚚 Chờ xác nhận</div>
-                        </div>
-                        <div class="order-product">
-                            <img src="https://via.placeholder.com/80" alt="Product">
-                            <div class="order-product-info">
-                                <div class="order-product-name">Quần Kaki Straight Cotton</div>
-                                <div class="order-product-variant">Ghi - M</div>
-                                <div class="order-product-price">549,000đ x1</div>
-                            </div>
-                        </div>
-                        <div class="order-total">Tổng tiền: <span style="color: #e53935;">549,000đ</span></div>
-                    </div>
-                </div>
-
-                <div class="order-content" id="shipping">
-                    <div class="empty-message">Bạn chưa có đơn hàng nào cần mua sắm</div>
-                </div>
-
-                <div class="order-content" id="completed">
-                    <div class="order-item">
-                        <div class="order-header">
-                            <div class="order-status">✅ Giao hàng thành công</div>
-                        </div>
-                        <div class="order-product">
-                            <img src="https://via.placeholder.com/80" alt="Product">
-                            <div class="order-product-info">
-                                <div class="order-product-name">Áo Sơ Mi Hoa Cổ Đức Cộc Tay Classic</div>
-                                <div class="order-product-variant">Ghi - M</div>
-                                <div class="order-product-price">349,000đ x1</div>
-                            </div>
-                        </div>
-                        <div class="order-total">Tổng tiền: <span style="color: #e53935;">399,000đ</span></div>
-                    </div>
-                </div>
-
-                <div class="order-content" id="cancelled">
-                    <div class="empty-message">Bạn chưa có đơn hàng bị hủy</div>
-                </div>
+                <%
+                If rsOrders.EOF Then
+                %>
+                    <div class="empty-message">Bạn chưa có đơn hàng nào</div>
+                <%
+                Else
+                %>
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn hàng</th>
+                            <th>Ngày đặt</th>
+                            <th>Thành tiền</th>
+                            <th>Trạng thái thanh toán</th>
+                            <th>Vận chuyển</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <%
+                        Do While Not rsOrders.EOF
+                            Dim orderId, orderDate, finalAmount, status
+                            orderId = rsOrders("OrderID")
+                            orderDate = rsOrders("OrderDate")
+                            finalAmount = rsOrders("FinalAmount")
+                            status = rsOrders("Status")
+                            
+                            Dim statusText, statusClass
+                            Select Case status
+                                Case 1
+                                    statusText = "Chờ xử lý"
+                                    statusClass = "status-pending"
+                                Case 2
+                                    statusText = "Đang giao"
+                                    statusClass = "status-shipping"
+                                Case 3
+                                    statusText = "Hoàn tất"
+                                    statusClass = "status-completed"
+                                Case 0
+                                    statusText = "Đã hủy"
+                                    statusClass = "status-cancelled"
+                            End Select
+                        %>
+                        <tr onclick="viewOrderDetail(<%=orderId%>)">
+                            <td class="order-id">#<%=orderId%></td>
+                            <td><%=FormatDateTime(orderDate, 2)%></td>
+                            <td class="order-amount"><%=FormatNumber(finalAmount, 0)%>₫</td>
+                            <td><span class="order-status <%=statusClass%>"><%=statusText%></span></td>
+                            <td><span class="order-status <%=statusClass%>"><%=statusText%></span></td>
+                        </tr>
+                        <%
+                            rsOrders.MoveNext
+                        Loop
+                        %>
+                    </tbody>
+                </table>
+                <%
+                End If
+                rsOrders.Close
+                %>
             </div>
         </div>
     </div>
 
-    <!-- Modal Add Address -->
-    <div class="modal" id="addressModal">
-        <div class="modal-content">
-            <h3 class="modal-title">Địa chỉ mới (dùng thông tin trước sắp nhập)</h3>
-            
-            <div class="modal-form-group">
-                <label>Họ và tên</label>
-                <input type="text" id="newAddressName" placeholder="Họ và tên">
-            </div>
-
-            <div class="modal-form-group">
-                <label>Số điện thoại</label>
-                <input type="text" id="newAddressPhone" placeholder="Số điện thoại">
-            </div>
-
-            <div class="modal-form-group">
-                <label>Tỉnh/ Thành phố, Quận/Huyện, Phường/Xã</label>
-                <select id="newAddressCity">
-                    <option value="">Chọn tỉnh/thành phố</option>
-                    <option value="hanoi">Hà Nội</option>
-                    <option value="hcm">Hồ Chí Minh</option>
-                    <option value="haiphong">Hải Phòng</option>
-                </select>
-            </div>
-
-            <div class="modal-form-group">
-                <label>Địa chỉ cụ thể</label>
-                <textarea id="newAddressDetail" rows="3" placeholder="Địa chỉ cụ thể"></textarea>
-            </div>
-
-            <div class="modal-buttons">
-                <button class="btn-cancel" onclick="closeAddressModal()">Trở Lại</button>
-                <button class="btn-submit" onclick="addNewAddress()">Hoàn thành</button>
-            </div>
-        </div>
-    </div>
+    <div id="footer"></div>
 
     <script>
+        // Load header/footer
+        async function loadComponent(id, file) {
+            try {
+                let res = await fetch(file);
+                if(res.ok) document.getElementById(id).innerHTML = await res.text();
+            } catch(e) { console.error(e); }
+        }
+        loadComponent("header", "../../FE/customer/component/header.asp");
+        loadComponent("footer", "../../FE/customer/component/footer.html");
+
         // Sidebar navigation
-        document.querySelectorAll('.sidebar-item').forEach(item => {
+        function showSection(sectionName) {
+            // Update sidebar
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('data-section') === sectionName) {
+                    item.classList.add('active');
+                }
+            });
+
+            // Update content
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionName).classList.add('active');
+        }
+
+        document.querySelectorAll('.sidebar-item[data-section]').forEach(item => {
             item.addEventListener('click', function() {
-                // Remove active class from all items
-                document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-                this.classList.add('active');
-
-                // Hide all sections
-                document.querySelectorAll('.profile-section, .address-section, .orders-section').forEach(section => {
-                    section.classList.remove('active');
-                });
-
-                // Show selected section
                 const section = this.getAttribute('data-section');
-                document.getElementById(section).classList.add('active');
+                showSection(section);
             });
         });
 
-        // Avatar upload
-        document.getElementById('avatarInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('avatarPreview').src = e.target.result;
-                };
-                reader.readAsDataURL(file);
+        // Filter orders
+        function filterOrders(status) {
+            window.location.href = 'account.asp?status=' + status + '#orders';
+        }
+
+        // View order detail
+        function viewOrderDetail(orderId) {
+            window.location.href = 'order-detail.asp?id=' + orderId;
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('Bạn có chắc muốn đăng xuất?')) {
+                window.location.href = 'logout.asp';
             }
-        });
-
-        // Address Modal
-        function openAddressModal() {
-            document.getElementById('addressModal').classList.add('active');
         }
 
-        function closeAddressModal() {
-            document.getElementById('addressModal').classList.remove('active');
+        // Auto scroll to orders if hash exists
+        if (window.location.hash === '#orders') {
+            showSection('orders');
         }
+        // Change Password Form
+        document.getElementById('changePasswordForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
 
-        function addNewAddress() {
-            const name = document.getElementById('newAddressName').value;
-            const phone = document.getElementById('newAddressPhone').value;
-            const city = document.getElementById('newAddressCity').value;
-            const detail = document.getElementById('newAddressDetail').value;
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const messageBox = document.getElementById('passwordMessage');
 
-            if (!name || !phone || !city || !detail) {
-                alert('Vui lòng điền đầy đủ thông tin');
+            // Validation
+            if (newPassword.length < 6) {
+                showMessage('Mật khẩu mới phải có ít nhất 6 ký tự', 'error');
                 return;
             }
 
-            const addressList = document.getElementById('addressList');
-            const newAddress = document.createElement('div');
-            newAddress.className = 'address-item';
-            newAddress.innerHTML = `
-                <div class="address-name">${name} | ${phone}</div>
-                <div class="address-detail">${detail}<br>${city}</div>
-            `;
-            addressList.appendChild(newAddress);
+            if (newPassword !== confirmPassword) {
+                showMessage('Mật khẩu xác nhận không khớp', 'error');
+                return;
+            }
 
-            // Clear form
-            document.getElementById('newAddressName').value = '';
-            document.getElementById('newAddressPhone').value = '';
-            document.getElementById('newAddressCity').value = '';
-            document.getElementById('newAddressDetail').value = '';
+            if (currentPassword === newPassword) {
+                showMessage('Mật khẩu mới phải khác mật khẩu hiện tại', 'error');
+                return;
+            }
 
-            closeAddressModal();
-        }
+            try {
+                const params = new URLSearchParams(new FormData(this));
 
-        // Order tabs
-        document.querySelectorAll('.order-tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                // Remove active class from all tabs
-                document.querySelectorAll('.order-tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
+                params.append('current_password', currentPassword);
+                params.append('new_password', newPassword);
+                params.append('confirm_password', confirmPassword);
 
-                // Hide all order contents
-                document.querySelectorAll('.order-content').forEach(content => {
-                    content.classList.remove('active');
+                const response = await fetch('/BE_FE/change-password.asp', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: params.toString()
                 });
 
-                // Show selected content
-                const tabName = this.getAttribute('data-tab');
-                document.getElementById(tabName).classList.add('active');
-            });
+                const result = await response.json();
+
+                if (result.success) {
+                    showMessage('Đổi mật khẩu thành công!', 'success');
+                    resetPasswordForm();
+                } else {
+                    showMessage(result.message || 'Có lỗi xảy ra. Vui lòng thử lại.', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Không thể kết nối đến server. Vui lòng thử lại sau.', 'error');
+            }
         });
 
-        // Populate "All" tab with all orders on page load
-        window.addEventListener('DOMContentLoaded', function() {
-            const allTab = document.getElementById('all');
-            const pending = document.getElementById('pending').innerHTML;
-            const completed = document.getElementById('completed').innerHTML;
-            allTab.innerHTML = pending + completed;
-        });
+        function showMessage(message, type) {
+            const messageBox = document.getElementById('passwordMessage');
+
+            messageBox.style.display = 'block'; // 🔥 BẬT LẠI
+            messageBox.textContent = message;
+            messageBox.className = 'password-message ' + type;
+
+            if (type === 'success') {
+                setTimeout(() => {
+                    messageBox.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        function resetPasswordForm() {
+            document.getElementById('changePasswordForm').reset();
+        }
     </script>
+    <script src="../../FE/js/header-footer.js"></script>
 </body>
 </html>
+<%
+conn.Close
+Set conn = Nothing
+%>

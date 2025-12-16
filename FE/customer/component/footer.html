@@ -52,11 +52,69 @@
         <input type="email" placeholder="Nhập email của bạn" required>
         <button type="submit">ĐĂNG KÝ</button>
       </form>
-      <img src="../assets/img/bocongthuong.png"
-        alt="Đã thông báo Bộ Công Thương" class="cert" />
+      <img src="../assets/img/bocongthuong.png" alt="Đã thông báo Bộ Công Thương" class="cert" />
     </div>
   </div>
   <div class="footer-bottom">
     <p>Copyright © 2025 Lavab. Powered by Nhom1</p>
   </div>
 </footer>
+
+<!-- SEARCH OVERLAY -->
+    <div class="sidebar-search" id="searchOverlay">
+        <div class="sitenav-search">
+            <div class="search-container">
+                <div class="row">
+                    <div class="logo">
+                        <div class="wrap-logo">
+                            <a href="/" itemprop="url">
+                                <img itemprop="logo" src="//theme.hstatic.net/200000690725/1001078549/14/logo.png?v=1017" 
+                                     alt="Torano" class="img-responsive logoimg" />
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="wpo-wrapper-search">
+                        <form action="/search.asp" method="GET" class="searchform searchform-categoris ultimate-search" id="searchForm">
+                            <div class="wpo-search-inner">
+                                <input type="hidden" name="type" value="product" />
+                                <input required id="inputSearchAuto" class="input-search" name="q" maxlength="40" 
+                                       autocomplete="off" type="text" size="20" placeholder="Tìm kiếm sản phẩm...">
+                                <button type="submit" class="btn-search btn" aria-label="button search">
+                                    <svg version="1.1" class="svg search" xmlns="http://www.w3.org/2000/svg" 
+                                         xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 27" 
+                                         style="enable-background:new 0 0 24 27;" xml:space="preserve">
+                                        <path d="M10,2C4.5,2,0,6.5,0,12s4.5,10,10,10s10-4.5,10-10S15.5,2,10,2z M10,19c-3.9,0-7-3.1-7-7s3.1-7,7-7s7,3.1,7,7S13.9,19,10,19z"></path>
+                                        <rect x="17" y="17" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -9.2844 19.5856)" width="4" height="8"></rect>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div id="ajaxSearchResults" class="smart-search-wrapper ajaxSearchResults">
+                                <div class="resultsContent" id="searchResultsContent">
+                                    <!-- Kết quả tìm kiếm sẽ được render ở đây -->
+                                </div>
+                                <div class="search-view-more" id="searchViewMore" style="display: none;">
+                                    <a href="#" class="search-view-more-link" id="viewMoreLink">
+                                        Xem thêm <span id="remainingCount">0</span> sản phẩm
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="search-suggest">
+                                <ul>
+                                    <li class="item"><a href="/search.asp?q=polo" title="Polo">Polo,</a></li>
+                                    <li class="item"><a href="/search.asp?q=short" title="Short">Short Đũi,</a></li>
+                                    <li class="item"><a href="/search.asp?q=tshirt" title="TShirt">TShirt</a></li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="actions">
+                        <div class="btn-close-search" aria-label="close-search" id="closeSearch"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
