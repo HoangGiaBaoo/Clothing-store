@@ -148,3 +148,48 @@
         }
     });
 })();
+
+// ===== XỬ LÝ HIỂN THỊ LỖI ĐĂNG NHẬP =====
+(function checkLoginError() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const loginError = urlParams.get('login_error');
+    
+    if (!loginError) return;
+    
+    function showError() {
+        const errorDiv = document.getElementById('loginErrorMsg');
+        
+        if (!errorDiv) {
+            setTimeout(showError, 100);
+            return;
+        }
+        
+        let errorMsg = '';
+        switch(loginError) {
+            case 'empty':
+                errorMsg = 'Vui lòng nhập đầy đủ thông tin!';
+                break;
+            case 'invalid':
+                errorMsg = 'Email hoặc mật khẩu không chính xác!';
+                break;
+            case 'db':
+                errorMsg = 'Lỗi hệ thống. Vui lòng thử lại sau!';
+                break;
+            default:
+                errorMsg = 'Đăng nhập thất bại. Vui lòng thử lại!';
+        }
+        
+        errorDiv.textContent = errorMsg;
+        errorDiv.style.display = 'block';
+        
+        const userIcon = document.querySelector('.icon-user');
+        if (userIcon) {
+            userIcon.classList.add('active');
+        }
+        
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, '', newUrl);
+    }
+    
+    showError();
+})();

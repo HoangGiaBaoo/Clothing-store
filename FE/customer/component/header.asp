@@ -31,6 +31,17 @@ Else
         Session("CartCount") = headerCartCount
     End If
 End If
+
+' --- KIỂM TRA TRẠNG THÁI ĐĂNG NHẬP ---
+Dim isLoggedIn, userFullName
+isLoggedIn = False
+userFullName = ""
+
+' Kiểm tra nếu có UserID trong Session và không rỗng
+If Not IsEmpty(Session("UserID")) And Session("UserID") <> "" And IsNumeric(Session("UserID")) Then
+    isLoggedIn = True
+    
+End If
 %>
 <header>
     <div class="header-top">
@@ -105,20 +116,56 @@ End If
                 <li class="icon-list-item nav-search">
                     <i class="icon-list-icon fa-solid fa-magnifying-glass"></i>
                 </li>
-                <li class="icon-list-item icon-user">
-                    <i class="icon-list-icon fa-regular fa-user"></i>
-                    <div class="icon-wrap">
-                        <div class="icon-wrap-header">
-                            <p class="icon-txt">THÔNG TIN TÀI KHOẢN</p>
+                <% If isLoggedIn Then %>
+                    <!-- ĐÃ ĐĂNG NHẬP -->
+                    <li class="icon-list-item icon-user">
+                        <i class="icon-list-icon fa-regular fa-user"></i>
+                        <div class="icon-wrap">
+                            <div class="icon-wrap-header">
+                                <p class="icon-txt">THÔNG TIN TÀI KHOẢN</p>
+                            </div>
+                            <ul class="icon-info">
+                                <li class="icon-info-name"><span><%=Session("FullName")%></span></li>
+                                <a href="account.asp" class="icon-info-link"><li class="icon-info-item">Tài khoản của tôi</li></a>
+                                <a href="logout.asp" class="icon-info-link"><li class="icon-info-item">Đăng xuất</li></a>
+                            </ul>
                         </div>
-                        <ul class="icon-info">
-                        <li class="icon-info-name"><span><%=Session("FullName")%></span></li>
-                        <a href="account.asp" class="icon-info-link"><li class="icon-info-item">Tài khoản của tôi</li></a>
-                        <a href="" class="icon-info-link"><li class="icon-info-item">Danh sách địa chỉ</li></a>
-                        <a href="logout.asp" class="icon-info-link"><li class="icon-info-item">Đăng xuất</li></a>
-                    </ul>
-                    </div>
-                </li>
+                    </li>
+                <% Else %>
+                    <!-- CHƯA ĐĂNG NHẬP -->
+                    <li class="icon-list-item icon-user">
+                        <i class="icon-list-icon fa-regular fa-user"></i>
+                        <div class="icon-wrap icon-wrap-login">
+                            <div class="icon-wrap-header">
+                                <p class="icon-txt">ĐĂNG NHẬP TÀI KHOẢN</p>
+                            </div>
+                            <p class="login-subtitle">Nhập email và mật khẩu của bạn:</p>
+                            
+                            <!-- Div hiển thị lỗi (được điều khiển bằng JavaScript) -->
+                            <div id="loginErrorMsg" class="login-error-msg" style="display: none;"></div>
+                            
+                            <form action="login-process.asp" method="POST" class="login-form-dropdown">
+                                <div class="login-form-group">
+                                    <input type="email" name="email" class="login-input" placeholder="Email" required>
+                                </div>
+                                <div class="login-form-group">
+                                    <input type="password" name="password" class="login-input" placeholder="Mật khẩu" required>
+                                </div>
+                                <p class="recaptcha-notice">
+                                    This site is protected by reCAPTCHA and the Google 
+                                    <a href="https://policies.google.com/privacy" target="_blank">Privacy Policy</a> and 
+                                    <a href="https://policies.google.com/terms" target="_blank">Terms of Service</a> apply.
+                                </p>
+                                <button type="submit" class="btn-login-dropdown">ĐĂNG NHẬP</button>
+                                
+                                <div class="login-links">
+                                    <p>Khách hàng mới? <a href="register.asp" class="login-link">Tạo tài khoản</a></p>
+                                    <p>Quên mật khẩu? <a href="forgot-password.asp" class="login-link">Khôi phục mật khẩu</a></p>
+                                </div>
+                            </form>
+                        </div>
+                    </li>
+                <% End If %>
                 <li class="icon-list-item">
                     <a href="cart.asp" class="cart-icon-wrap">
                         <i class="icon-list-icon fa-solid fa-cart-shopping"></i>
