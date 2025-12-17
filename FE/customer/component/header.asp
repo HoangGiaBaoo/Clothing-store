@@ -76,13 +76,13 @@ End If
                         <i class="dropdown-icon fa-solid fa-angle-down"></i>
                     </a>
                     <ul class="dropdown">
-                        <li><a href="#">Áo Khoác</a></li>
-                        <li><a href="#">Áo - Quần Nỉ</a></li>
-                        <li><a href="#">Áo Polo</a></li>
-                        <li><a href="#">Áo Sơ Mi</a></li>
-                        <li><a href="#">Áo Thun</a></li>
-                        <li><a href="#">Áo Blazer</a></li>
-                        <li><a href="#">Áo Len</a></li>
+                        <li><a href="product_list.asp?cate=5">Áo Khoác</a></li>
+                        <li><a href="product_list.asp?cate=5">Áo - Quần Nỉ</a></li>
+                        <li><a href="product_list.asp?cate=5">Áo Polo</a></li>
+                        <li><a href="product_list.asp?cate=5">Áo Sơ Mi</a></li>
+                        <li><a href="product_list.asp?cate=5">Áo Thun</a></li>
+                        <li><a href="product_list.asp?cate=5">Áo Blazer</a></li>
+                        <li><a href="product_list.asp?cate=5">Áo Len</a></li>
                     </ul>
                 </li>
 
@@ -92,11 +92,11 @@ End If
                         <i class="dropdown-icon fa-solid fa-angle-down"></i>
                     </a>
                     <ul class="dropdown">
-                        <li><a href="#">Quần Dài Kaki</a></li>
-                        <li><a href="#">Quần Âu</a></li>
-                        <li><a href="#">Quần Gió</a></li>
-                        <li><a href="#">Quần Jeans</a></li>
-                        <li><a href="#">Quần Short</a></li>
+                        <li><a href="product_list.asp?cate=5">Quần Dài Kaki</a></li>
+                        <li><a href="product_list.asp?cate=5">Quần Âu</a></li>
+                        <li><a href="product_list.asp?cate=5">Quần Gió</a></li>
+                        <li><a href="product_list.asp?cate=5">Quần Jeans</a></li>
+                        <li><a href="product_list.asp?cate=5">Quần Short</a></li>
                     </ul>
                 </li>
 
@@ -106,7 +106,7 @@ End If
                         <i class="dropdown-icon fa-solid fa-angle-down"></i>
                     </a>
                     <ul class="dropdown">
-                        <li><a href="#">Thắt Lưng</a></li>
+                        <li><a href="product_list.asp?cate=5">Thắt Lưng</a></li>
                     </ul>
                 </li>
 

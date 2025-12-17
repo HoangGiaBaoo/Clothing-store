@@ -33,7 +33,6 @@ Set rsNew = conn.Execute(sqlNew)
   
   <link rel="stylesheet" href="../../assets/css/base.css">
   <link rel="stylesheet" href="../../assets/css/main.css">
-  <link rel="stylesheet" href="../../assets/css/product_list.css">
   <link rel="stylesheet" href="../../assets/css/header-footer.css">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -153,7 +152,7 @@ Set rsNew = conn.Execute(sqlNew)
             <div class="categories-container">
                 <div class="categories-wrapper" id="categoriesWrapper">
                     <!-- Category 1 -->
-                    <a href="products.html?category=ao-khoac" class="category-card">
+                    <a href="product-list.asp?cate=1" class="category-card">
                         <div class="category-image-wrapper">
                             <img src="../assets/img/home_category_1_img.jpg" alt="Áo Khoác" class="category-image">
                             <div class="category-info">
@@ -166,7 +165,7 @@ Set rsNew = conn.Execute(sqlNew)
                     </a>
 
                     <!-- Category 2 -->
-                    <a href="products.html?category=bo-thu-dong" class="category-card">
+                    <a href="product-list.asp?cate=2" class="category-card">
                         <div class="category-image-wrapper">
                             <img src="../assets/img/home_category_2_img.jpg" alt="Bộ Thu Đông" class="category-image">
                             <div class="category-info">
@@ -179,7 +178,7 @@ Set rsNew = conn.Execute(sqlNew)
                     </a>
 
                     <!-- Category 3 -->
-                    <a href="products.html?category=quan-kaki" class="category-card">
+                    <a href="product-list.asp?cate=3" class="category-card">
                         <div class="category-image-wrapper">
                             <img src="../assets/img/home_category_3_img.jpg" alt="Quần Kaki" class="category-image">
                             <div class="category-info">
@@ -192,7 +191,7 @@ Set rsNew = conn.Execute(sqlNew)
                     </a>
 
                     <!-- Category 4 -->
-                    <a href="products.html?category=quan-jeans" class="category-card">
+                    <a href="product-list.asp?cate=4" class="category-card">
                         <div class="category-image-wrapper">
                             <img src="../assets/img/home_category_4_img.jpg" alt="Quần Jeans" class="category-image">
                             <div class="category-info">
@@ -205,7 +204,7 @@ Set rsNew = conn.Execute(sqlNew)
                     </a>
 
                     <!-- Category 5 -->
-                    <a href="products.html?category=ao-thun" class="category-card">
+                    <a href="product-list.asp?cate=5" class="category-card">
                         <div class="category-image-wrapper">
                             <img src="../assets/img/home_category_5_img.jpg" alt="Polo" class="category-image">
                             <div class="category-info">
@@ -218,7 +217,7 @@ Set rsNew = conn.Execute(sqlNew)
                     </a>
 
                     <!-- Category 6 -->
-                    <a href="products.html?category=ao-so-mi" class="category-card">
+                    <a href="product-list.asp?cate=6" class="category-card">
                         <div class="category-image-wrapper">
                             <img src="../assets/img/home_category_6_img.jpg" alt="Quần Âu" class="category-image">
                             <div class="category-info">
@@ -231,7 +230,7 @@ Set rsNew = conn.Execute(sqlNew)
                     </a>
 
                     <!-- Category 7 -->
-                    <a href="products.html?category=phu-kien" class="category-card">
+                    <a href="product-list.asp?cate=7" class="category-card">
                         <div class="category-image-wrapper">
                             <img src="../assets/img/home_category_7_img.jpg" alt="Áo Sơ Mi" class="category-image">
                             <div class="category-info">
@@ -244,7 +243,7 @@ Set rsNew = conn.Execute(sqlNew)
                     </a>
 
                     <!-- Category 8 -->
-                    <a href="products.html?category=giay-dep" class="category-card">
+                    <a href="product-list.asp?cate=8" class="category-card">
                         <div class="category-image-wrapper">
                             <img src="../assets/img/home_category_8_img.jpg" alt="Áo Thun" class="category-image">
                             <div class="category-info">

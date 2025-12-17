@@ -2,6 +2,29 @@
 <% Response.CharSet = "UTF-8" %>
 <!-- #include file="/BE/db/connect.asp" -->
 <%
+Sub WriteUTF8(text)
+    If IsNull(text) Or text = "" Then Exit Sub
+    
+    Dim stream
+    Set stream = Server.CreateObject("ADODB.Stream")
+    stream.Open
+    stream.Type = 2 ' Text
+    stream.Charset = "UTF-8"
+    stream.WriteText text
+    
+    stream.Position = 0
+    stream.Type = 1 ' Binary
+    
+    If stream.Size > 3 Then
+        stream.Position = 3 
+        Dim binaryData
+        binaryData = stream.Read
+        Response.BinaryWrite binaryData
+    End If
+    
+    stream.Close
+    Set stream = Nothing
+End Sub
 ' Kiểm tra đăng nhập
 If Session("UserID") = "" Or Not IsNumeric(Session("UserID")) Then
     Response.Redirect "login.asp"
@@ -571,14 +594,14 @@ Set rsDetails = conn.Execute(sqlDetails)
             <div class="product-item">
                 <div class="product-image">
                     <%If imageURL <> "" Then%>
-                    <img src="<%=imageURL%>" alt="<%=productName%>">
+                    <img src="<%=imageURL%>" alt="<% Call WriteUTF8(productName)%>">
                     <%Else%>
                     <img src="/assets/images/no-image.jpg" alt="No image">
                     <%End If%>
                 </div>
 
                 <div class="product-info">
-                    <div class="product-name"><%=productName%></div>
+                    <div class="product-name"><% Call WriteUTF8(productName)%></div>
                     <%If color <> "" Or size <> "" Then%>
                     <div class="product-variant">
                         <%If color <> "" Then%>

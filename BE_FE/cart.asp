@@ -343,7 +343,7 @@ End If
                             
                             <div class="item-variant">
                                 <% If pColor <> "" Then %>
-                                    <% WriteUTF8(pColor) %> / 
+                                    <% =pColor %> / 
                                 <% End If %> 
                                 <% WriteUTF8(pSize) %>
                             </div>

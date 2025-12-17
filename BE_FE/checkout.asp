@@ -199,7 +199,7 @@ rsList.Open sqlList, conn
                     </div>
                     
                     <div class="item-meta">
-                        <% Call WriteUTF8(rsList("ColorName")) %> / <% Call WriteUTF8(rsList("SizeName")) %>
+                        <% =rsList("ColorName") %> / <% Call WriteUTF8(rsList("SizeName")) %>
                     </div>
                 </div>
                 <div class="item-price">
