@@ -15,13 +15,13 @@ End If
 Dim whereCondition
 Select Case CInt(categoryId)
     Case 1 ' Đồ Thu Đông
-        whereCondition = "p.CategoryID = 8 AND p.IsActive = 1"
+        whereCondition = "p.CategoryID = 5 OR p.CategoryID = 10"
         
     Case 2 ' Đồ Công Sở
-        whereCondition = "p.CategoryID = 9 AND p.IsActive = 1"
+        whereCondition = "p.CategoryID = 7 OR p.CategoryID = 12"
         
     Case 3 ' Đồ Thể Thao
-        whereCondition = "p.CategoryID = 10 AND p.IsActive = 1"
+        whereCondition = "p.CategoryID = 6 OR p.CategoryID = 15 OR p.CategoryID = 8"
         
     Case Else ' Trường hợp không hợp lệ
         Response.Write "[]"

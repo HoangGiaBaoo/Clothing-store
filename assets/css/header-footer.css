@@ -120,7 +120,7 @@
 .has-dropdown::after {
   content: "";
   width: 80px;
-  height: 30px;
+  height: 60px;
   display: block;
   position: absolute;
   top: 20px;

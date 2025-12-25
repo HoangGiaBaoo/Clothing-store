@@ -324,8 +324,9 @@ End If
                             pImage = rsCart("MainImage")
                         End If
                         
-                        pPrice = rsCart("SalePrice")
-                        pQty = rsCart("Quantity")
+                        pQty = Cdbl(rsCart("Quantity"))
+                        pPrice = Cdbl(rsCart("SalePrice"))
+                        pPrice1=pPrice*pQty
                         cartID = rsCart("CartID")
                         prodID = rsCart("ProductID")
                     %>
@@ -351,7 +352,7 @@ End If
                             <div class="item-price-mobile"><%=FormatNumber(pPrice, 0)%>₫</div>
                         </div>
                         <div class="item-price">
-                            <div class="price-current"><%=FormatNumber(pPrice, 0)%>₫</div>
+                            <div class="price-current"><%=FormatNumber(pPrice1, 0)%>₫</div>
                         </div>
                         <div class="item-qty">
                             <div class="qty-controls">

@@ -54,7 +54,7 @@ If Request.ServerVariables("REQUEST_METHOD") = "POST" Then
                 finalRedirect = targetUrl
             Else
                 If role = "admin" Then
-                    finalRedirect = "admin/dashboard.asp"
+                    finalRedirect = "dashboard.asp"
                 Else
                     finalRedirect = "index.asp"
                 End If

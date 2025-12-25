@@ -66,10 +66,9 @@ shipFee = CDbl(rsOrder("ShippingFee"))
 finalTotal = CDbl(rsOrder("FinalAmount"))
 
 ' Format lại phương thức thanh toán cho đẹp (Hardcode text tiếng Việt thì không cần WriteUTF8 nếu file lưu chuẩn UTF-8)
-If payMethod = "COD" Then 
-    payMethodText = "Phương thức thanh toán - COD"
-Else
-    payMethodText = payMethod
+
+If payMethod = "COD" Then
+    payMethodText = "Thanh toán khi nhận hàng (COD)"
 End If
 
 rsOrder.Close
@@ -134,7 +133,7 @@ rsDetails.Open sqlDetails, conn
                  <% End If %>
 
                 <div class="info-section">
-                    <h3 class="info-title">Phương thức thanh toán : <% =payMethodText %> </h3>
+                    <h3 class="info-title"> Thanh toán khi nhận hàng (COD) </h3>
                     
                 </div>
             </div>
@@ -169,7 +168,7 @@ rsDetails.Open sqlDetails, conn
                     </div>
                 </div>
                 <div class="item-row-price">
-                    <%=FormatNumber(rsDetails("Price") * rsDetails("Quantity"), 0)%>₫
+                    <%=FormatNumber(rsDetails("Price") , 0)%>₫
                 </div>
             </div>
             <% 

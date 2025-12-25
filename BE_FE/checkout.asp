@@ -203,7 +203,7 @@ rsList.Open sqlList, conn
                     </div>
                 </div>
                 <div class="item-price">
-                    <%=FormatNumber(rsList("SalePrice") * rsList("Quantity"), 0)%>₫
+                    <%=FormatNumber(rsList("SalePrice") , 0)%> ₫
                 </div>
             </div>
             <% 

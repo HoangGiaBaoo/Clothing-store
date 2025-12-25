@@ -4,7 +4,6 @@
 ' 1. Cấu hình Tiếng Việt và bộ đệm
 Response.Buffer = True
 %>
-<!-- #include file="/BE/db/connect.asp" -->
 
 <%
 ' --- A. LẤY DANH MỤC SẢN PHẨM (Sắp xếp theo thứ tự hiển thị) ---
@@ -152,7 +151,7 @@ Set rsNew = conn.Execute(sqlNew)
             <div class="categories-container">
                 <div class="categories-wrapper" id="categoriesWrapper">
                     <!-- Category 1 -->
-                    <a href="product-list.asp?cate=1" class="category-card">
+                    <a href="product_list.asp?cate=4" class="category-card">
                         <div class="category-image-wrapper">
                             <img src="../assets/img/home_category_1_img.jpg" alt="Áo Khoác" class="category-image">
                             <div class="category-info">
@@ -165,7 +164,7 @@ Set rsNew = conn.Execute(sqlNew)
                     </a>
 
                     <!-- Category 2 -->
-                    <a href="product-list.asp?cate=2" class="category-card">
+                    <a href="product_list.asp?cate=5" class="category-card">
                         <div class="category-image-wrapper">
                             <img src="../assets/img/home_category_2_img.jpg" alt="Bộ Thu Đông" class="category-image">
                             <div class="category-info">
@@ -178,7 +177,7 @@ Set rsNew = conn.Execute(sqlNew)
                     </a>
 
                     <!-- Category 3 -->
-                    <a href="product-list.asp?cate=3" class="category-card">
+                    <a href="product_list.asp?cate=11" class="category-card">
                         <div class="category-image-wrapper">
                             <img src="../assets/img/home_category_3_img.jpg" alt="Quần Kaki" class="category-image">
                             <div class="category-info">
@@ -191,7 +190,7 @@ Set rsNew = conn.Execute(sqlNew)
                     </a>
 
                     <!-- Category 4 -->
-                    <a href="product-list.asp?cate=4" class="category-card">
+                    <a href="product_list.asp?cate=14" class="category-card">
                         <div class="category-image-wrapper">
                             <img src="../assets/img/home_category_4_img.jpg" alt="Quần Jeans" class="category-image">
                             <div class="category-info">
@@ -204,7 +203,7 @@ Set rsNew = conn.Execute(sqlNew)
                     </a>
 
                     <!-- Category 5 -->
-                    <a href="product-list.asp?cate=5" class="category-card">
+                    <a href="product_list.asp?cate=6" class="category-card">
                         <div class="category-image-wrapper">
                             <img src="../assets/img/home_category_5_img.jpg" alt="Polo" class="category-image">
                             <div class="category-info">
@@ -217,7 +216,7 @@ Set rsNew = conn.Execute(sqlNew)
                     </a>
 
                     <!-- Category 6 -->
-                    <a href="product-list.asp?cate=6" class="category-card">
+                    <a href="product_list.asp?cate=12" class="category-card">
                         <div class="category-image-wrapper">
                             <img src="../assets/img/home_category_6_img.jpg" alt="Quần Âu" class="category-image">
                             <div class="category-info">
@@ -230,7 +229,7 @@ Set rsNew = conn.Execute(sqlNew)
                     </a>
 
                     <!-- Category 7 -->
-                    <a href="product-list.asp?cate=7" class="category-card">
+                    <a href="product_list.asp?cate=7" class="category-card">
                         <div class="category-image-wrapper">
                             <img src="../assets/img/home_category_7_img.jpg" alt="Áo Sơ Mi" class="category-image">
                             <div class="category-info">
@@ -243,7 +242,7 @@ Set rsNew = conn.Execute(sqlNew)
                     </a>
 
                     <!-- Category 8 -->
-                    <a href="product-list.asp?cate=8" class="category-card">
+                    <a href="product_list.asp?cate=8" class="category-card">
                         <div class="category-image-wrapper">
                             <img src="../assets/img/home_category_8_img.jpg" alt="Áo Thun" class="category-image">
                             <div class="category-info">

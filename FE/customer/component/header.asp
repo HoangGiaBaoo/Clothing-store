@@ -67,36 +67,36 @@ End If
                 <a href="index.asp"><img class="logo-img" src="../assets/img/logo.png" alt="logo"></a>
             </div>
             <ul class="menu">
-                <li><a href="#">Sản phẩm mới</a></li>
-                <li><a href="#">Danh mục sale</a></li>
+                <li><a href="product_list.asp?cate=17">Sản phẩm mới</a></li>
+                <li><a href="product_list.asp?cate=18">Danh mục sale</a></li>
 
                 <li class="has-dropdown">
-                    <a href="#">
+                    <a href="product_list.asp?cate=1">
                         Áo nam
                         <i class="dropdown-icon fa-solid fa-angle-down"></i>
                     </a>
                     <ul class="dropdown">
-                        <li><a href="product_list.asp?cate=5">Áo Khoác</a></li>
+                        <li><a href="product_list.asp?cate=4">Áo Khoác</a></li>
                         <li><a href="product_list.asp?cate=5">Áo - Quần Nỉ</a></li>
-                        <li><a href="product_list.asp?cate=5">Áo Polo</a></li>
-                        <li><a href="product_list.asp?cate=5">Áo Sơ Mi</a></li>
-                        <li><a href="product_list.asp?cate=5">Áo Thun</a></li>
-                        <li><a href="product_list.asp?cate=5">Áo Blazer</a></li>
-                        <li><a href="product_list.asp?cate=5">Áo Len</a></li>
+                        <li><a href="product_list.asp?cate=6">Áo Polo</a></li>
+                        <li><a href="product_list.asp?cate=7">Áo Sơ Mi</a></li>
+                        <li><a href="product_list.asp?cate=8">Áo Thun</a></li>
+                        <li><a href="product_list.asp?cate=9">Áo Blazer</a></li>
+                        <li><a href="product_list.asp?cate=10">Áo Len</a></li>
                     </ul>
                 </li>
 
                 <li class="has-dropdown">
-                    <a href="#">
+                    <a href="product_list.asp?cate=2">
                         Quần nam
                         <i class="dropdown-icon fa-solid fa-angle-down"></i>
                     </a>
                     <ul class="dropdown">
-                        <li><a href="product_list.asp?cate=5">Quần Dài Kaki</a></li>
-                        <li><a href="product_list.asp?cate=5">Quần Âu</a></li>
-                        <li><a href="product_list.asp?cate=5">Quần Gió</a></li>
-                        <li><a href="product_list.asp?cate=5">Quần Jeans</a></li>
-                        <li><a href="product_list.asp?cate=5">Quần Short</a></li>
+                        <li><a href="product_list.asp?cate=11">Quần Dài Kaki</a></li>
+                        <li><a href="product_list.asp?cate=12">Quần Âu</a></li>
+                        <li><a href="product_list.asp?cate=13">Quần Gió</a></li>
+                        <li><a href="product_list.asp?cate=14">Quần Jeans</a></li>
+                        <li><a href="product_list.asp?cate=15">Quần Short</a></li>
                     </ul>
                 </li>
 
@@ -106,7 +106,7 @@ End If
                         <i class="dropdown-icon fa-solid fa-angle-down"></i>
                     </a>
                     <ul class="dropdown">
-                        <li><a href="product_list.asp?cate=5">Thắt Lưng</a></li>
+                        <li><a href="product_list.asp?cate=16">Thắt Lưng</a></li>
                     </ul>
                 </li>
 
