@@ -20,7 +20,7 @@
 .header-top-item {
   display: flex;
   align-items: center;
-  color: #fff;
+  color: #242021;
   font-size: 1.3rem;
   line-height: 1.3rem;
 }
@@ -28,6 +28,7 @@
 .header-top-contact {
   text-decoration: none;
   color: #fff;
+  cursor: default;
 }
 
 .header-top-hotline {

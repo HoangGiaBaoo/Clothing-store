@@ -29,7 +29,7 @@ If Request.ServerVariables("REQUEST_METHOD") = "POST" Then
 
         ' [FIX]: Dùng đúng tên bảng users và cột id
         Dim sql, rsUser
-        sql = "SELECT id, email, password, role, first_name, last_name FROM users WHERE email = N'" & email & "' AND password = N'" & pass & "'"
+        sql = "SELECT id, email, password, role, first_name, last_name FROM users WHERE email = N'" & email & "' AND password = N'" & pass & "' AND status = 1"
         
         Set rsUser = conn.Execute(sql)
 

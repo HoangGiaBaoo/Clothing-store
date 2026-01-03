@@ -207,7 +207,7 @@ For i = 1 To 5
         sqlImg = "INSERT INTO ProductImages(" & _
                  "ProductID, ImageURL, IsMainImage, DisplayOrder, CreatedDate) " & _
                  "VALUES (" & newProID & ", " & SqlStr(imgUrl) & ", " & _
-                 isMain & ", " & (i-1) & ", GETDATE())"
+                 isMain & ", " & (i) & ", GETDATE())"
         
         conn.Execute(sqlImg)
         

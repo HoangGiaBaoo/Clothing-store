@@ -86,8 +86,8 @@ conn.BeginTrans
     newOrderID = rsID(0)
     rsID.Close
 
-    ' B. INSERT VÀO ORDER_DETAILS
-    Dim sqlDetail
+    ' B. INSERT VÀO ORDER_DETAILS & CẬP NHẬT SỐ LƯỢNG TỒN KHO
+    Dim sqlDetail, sqlUpdateStock, sqlUpdateVariant, sqlCheckVariantStock, sqlDisableVariant, sqlDisableProduct
     Do While Not rsCart.EOF
         Dim pID, qty, price, color, size
         pID   = rsCart("ProductID")
@@ -99,13 +99,55 @@ conn.BeginTrans
         size  = rsCart("SizeName")
         If IsNull(size) Then size = ""
         
-        ' Ép kiểu DECIMAL cho Price
+        ' 1. Thêm vào OrderDetails
         sqlDetail = "INSERT INTO OrderDetails (OrderID, ProductID, Quantity, Price, Color, Size) " & _
                     "VALUES (" & newOrderID & ", " & pID & ", " & qty & ", " & _
                     "CAST(" & Replace(CStr(price), ",", ".") & " AS DECIMAL(18,2)), " & _
                     "N'" & color & "', N'" & size & "')"
         
         conn.Execute(sqlDetail)
+        
+        ' 2. Giảm số lượng tồn kho trong bảng Products
+        sqlUpdateStock = "UPDATE Products SET StockQuantity = StockQuantity - " & qty & _
+                        " WHERE ProductID = " & pID
+        
+        conn.Execute(sqlUpdateStock)
+        
+        ' 3. Giảm số lượng tồn kho trong bảng ProductVariants
+        If color <> "" And size <> "" Then
+            sqlUpdateVariant = "UPDATE ProductVariants SET StockQuantity = StockQuantity - " & qty & _
+                              " WHERE ProductID = " & pID & _
+                              " AND ColorName = N'" & color & "'" & _
+                              " AND SizeName = N'" & size & "'"
+            
+            conn.Execute(sqlUpdateVariant)
+            
+            ' 4. Kiểm tra và vô hiệu hóa ProductVariant nếu hết hàng
+            sqlDisableVariant = "UPDATE ProductVariants SET IsActive = 0 " & _
+                               "WHERE ProductID = " & pID & _
+                               " AND ColorName = N'" & color & "'" & _
+                               " AND SizeName = N'" & size & "'" & _
+                               " AND StockQuantity <= 0"
+            
+            conn.Execute(sqlDisableVariant)
+        End If
+        
+        ' 5. Kiểm tra và vô hiệu hóa Product nếu hết hàng
+        ' Vô hiệu hóa khi tồn kho Product = 0 HOẶC tất cả variants đều hết hàng
+        sqlDisableProduct = "UPDATE Products SET IsActive = 0 " & _
+                           "WHERE ProductID = " & pID & _
+                           " AND (" & _
+                           "    StockQuantity <= 0 " & _
+                           "    OR NOT EXISTS (" & _
+                           "        SELECT 1 FROM ProductVariants " & _
+                           "        WHERE ProductID = " & pID & _
+                           "        AND StockQuantity > 0 " & _
+                           "        AND IsActive = 1" & _
+                           "    )" & _
+                           ")"
+        
+        conn.Execute(sqlDisableProduct)
+        
         rsCart.MoveNext
     Loop
     rsCart.Close

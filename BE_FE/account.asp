@@ -2,13 +2,55 @@
 <% Response.CharSet = "UTF-8" %>
 <!-- #include file="/BE/db/connect.asp" -->
 <%
+' Bật Error Handling
+On Error Resume Next
+
 ' Kiểm tra đăng nhập
 If Session("UserID") = "" Or Not IsNumeric(Session("UserID")) Then
+    If Not conn Is Nothing Then
+        If conn.State = 1 Then conn.Close
+        Set conn = Nothing
+    End If
     Response.Redirect "login.asp"
     Response.End
 End If
 
 Dim userId : userId = CLng(Session("UserID"))
+
+' XỬ LÝ CẬP NHẬT THÔNG TIN
+If Request.ServerVariables("REQUEST_METHOD") = "POST" And Request.QueryString("action") = "update_profile" Then
+    Dim updFirstName, updLastName, updPhone, updAddress
+    updFirstName = Trim(Request.Form("first_name"))
+    updLastName = Trim(Request.Form("last_name"))
+    updPhone = Trim(Request.Form("phone"))
+    updAddress = Trim(Request.Form("address"))
+    
+    ' Validate
+    Dim errorMsg : errorMsg = ""
+    If updFirstName = "" Then errorMsg = "Vui lòng nhập họ"
+    If updLastName = "" Then errorMsg = "Vui lòng nhập tên"
+    If updPhone = "" Then errorMsg = "Vui lòng nhập số điện thoại"
+    
+    If errorMsg = "" Then
+        ' Cập nhật database
+        Dim sqlUpdate
+        sqlUpdate = "UPDATE users SET " & _
+                   "first_name = N'" & Replace(updFirstName, "'", "''") & "', " & _
+                   "last_name = N'" & Replace(updLastName, "'", "''") & "', " & _
+                   "phone_number = '" & Replace(updPhone, "'", "''") & "', " & _
+                   "address = N'" & Replace(updAddress, "'", "''") & "' " & _
+                   "WHERE id = " & userId
+        
+        conn.Execute sqlUpdate
+        Session("FullName")= updFirstName & " " & updLastName
+        If Err.Number = 0 Then
+            Response.Redirect "account.asp?msg=updated"
+        Else
+            Response.Redirect "account.asp?msg=error"
+        End If
+        Response.End
+    End If
+End If
 
 ' Lấy thông tin user
 Dim sqlUser, rsUser
@@ -16,6 +58,12 @@ sqlUser = "SELECT * FROM users WHERE id = " & userId
 Set rsUser = conn.Execute(sqlUser)
 
 If rsUser.EOF Then
+    rsUser.Close
+    Set rsUser = Nothing
+    If Not conn Is Nothing Then
+        If conn.State = 1 Then conn.Close
+        Set conn = Nothing
+    End If
     Response.Redirect "login.asp"
     Response.End
 End If
@@ -27,6 +75,7 @@ email = rsUser("email")
 phone = rsUser("phone_number")
 address = rsUser("address")
 rsUser.Close
+Set rsUser = Nothing
 
 ' Lấy đơn hàng
 Dim sqlOrders, rsOrders
@@ -60,7 +109,6 @@ Set rsOrders = conn.Execute(sqlOrders)
     <link rel="stylesheet" href="../../assets/css/header-footer.css">
     <link rel="stylesheet" href="/assets/fonts/fontawesome-free-6.7.2-web/css/all.min.css">
     <style>
-
         .page-title {
             text-align: center;
             font-size: 28px;
@@ -139,7 +187,7 @@ Set rsOrders = conn.Execute(sqlOrders)
             background: white;
             padding: 30px;
             border-radius: 8px;
-            min-height: 500px;
+            min-height: 450px;
             font-size: 1.6rem;
         }
 
@@ -159,45 +207,295 @@ Set rsOrders = conn.Execute(sqlOrders)
             border-bottom: 2px solid #f0f0f0;
         }
 
+        /* Success/Error Messages */
+        .alert-message {
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.4rem;
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #4caf50;
+        }
+
+        .alert-error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #f44336;
+        }
+
         /* Profile Section */
+        .profile-view {
+            max-width: 700px;
+        }
+
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .btn-edit-profile {
+            padding: 10px 25px;
+            background: white;
+            border: 2px solid #333;
+            color: #333;
+            border-radius: 6px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-edit-profile:hover {
+            background: #333;
+            color: white;
+        }
+
         .info-grid {
             display: grid;
             gap: 15px;
-            max-width: 600px;
         }
 
         .info-row {
             display: flex;
-            padding: 12px 0;
+            padding: 15px 0;
             border-bottom: 1px solid #f0f0f0;
         }
 
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
         .info-label {
-            flex: 0 0 150px;
+            flex: 0 0 180px;
             color: #666;
             font-weight: 500;
+            font-size: 1.4rem;
         }
 
         .info-value {
             flex: 1;
             color: #333;
+            font-size: 1.5rem;
         }
 
-        .btn-view-address {
-            display: inline-block;
-            padding: 8px 20px;
-            background: white;
-            border: 1px solid #333;
+        /* Profile Edit Form */
+        .profile-form {
+            max-width: 700px;
+            display: none;
+        }
+
+        .profile-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
             color: #333;
-            text-decoration: none;
-            border-radius: 4px;
-            margin-top: 15px;
+            font-size: 1.4rem;
+        }
+
+        .form-group label span.required {
+            color: #e53935;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1.4rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #333;
+        }
+
+        .form-group input:disabled {
+            background: #f5f5f5;
+            cursor: not-allowed;
+            color: #999;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            font-size: 1.2rem;
+            color: #999;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .btn-save {
+            padding: 12px 35px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-save:hover {
+            background: #000;
+        }
+
+        .btn-cancel {
+            padding: 12px 35px;
+            background: white;
+            color: #666;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
             transition: all 0.3s;
         }
 
-        .btn-view-address:hover {
+        .btn-cancel:hover {
+            border-color: #333;
+            color: #333;
+        }
+
+        /* Password Form */
+        .password-form {
+            max-width: 500px;
+        }
+
+        .form-group-password {
+            margin-bottom: 20px;
+        }
+
+        .form-group-password label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group-password input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-group-password input:focus {
+            outline: none;
+            border-color: #333;
+        }
+
+        .form-group-password small {
+            display: block;
+            margin-top: 5px;
+            font-size: 12px;
+        }
+
+        .btn-save-password {
+            padding: 10px 30px;
             background: #333;
             color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-save-password:hover {
+            background: #000;
+        }
+
+        .btn-cancel-password {
+            padding: 10px 30px;
+            background: white;
+            color: #666;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-cancel-password:hover {
+            border-color: #333;
+            color: #333;
+        }
+
+        .password-message {
+            margin-top: 20px;
+            padding: 12px 15px;
+            border-radius: 4px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .password-message.success {
+            display: block;
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+        }
+
+        .password-message.error {
+            display: block;
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
         }
 
         /* Orders Section */
@@ -236,7 +534,6 @@ Set rsOrders = conn.Execute(sqlOrders)
             background: #333;
         }
 
-        /* Order Table */
         .orders-table {
             width: 100%;
             border-collapse: collapse;
@@ -313,24 +610,6 @@ Set rsOrders = conn.Execute(sqlOrders)
             color: #999;
         }
 
-        /* Logout */
-        .btn-logout {
-            width: 100%;
-            padding: 12px;
-            background: #e53935;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .btn-logout:hover {
-            background: #c62828;
-        }
-
         /* Responsive */
         @media (max-width: 768px) {
             .account-container {
@@ -341,6 +620,31 @@ Set rsOrders = conn.Execute(sqlOrders)
                 flex: none;
             }
 
+            .profile-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .info-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .info-label {
+                flex: none;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn-save,
+            .btn-cancel {
+                width: 100%;
+                justify-content: center;
+            }
+
             .orders-table {
                 font-size: 14px;
             }
@@ -349,102 +653,6 @@ Set rsOrders = conn.Execute(sqlOrders)
             .orders-table td {
                 padding: 10px 8px;
             }
-        }
-        /* Password Form */
-        .password-form {
-            max-width: 500px;
-        }
-
-        .form-group-password {
-            margin-bottom: 20px;
-        }
-
-        .form-group-password label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #333;
-        }
-
-        .form-group-password input {
-            width: 100%;
-            padding: 10px 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 4px;
-            font-size: 14px;
-            transition: border-color 0.2s;
-        }
-
-        .form-group-password input:focus {
-            outline: none;
-            border-color: #333;
-        }
-
-        .form-group-password small {
-            display: block;
-            margin-top: 5px;
-            font-size: 12px;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .btn-save-password {
-            padding: 10px 30px;
-            background: #333;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .btn-save-password:hover {
-            background: #000;
-        }
-
-        .btn-cancel-password {
-            padding: 10px 30px;
-            background: white;
-            color: #666;
-            border: 1px solid #e0e0e0;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-cancel-password:hover {
-            border-color: #333;
-            color: #333;
-        }
-
-        .password-message {
-            margin-top: 20px;
-            padding: 12px 15px;
-            border-radius: 4px;
-            font-size: 14px;
-            display: none;
-        }
-
-        .password-message.success {
-            display: block;
-            background: #e8f5e9;
-            color: #2e7d32;
-            border: 1px solid #a5d6a7;
-        }
-
-        .password-message.error {
-            display: block;
-            background: #ffebee;
-            color: #c62828;
-            border: 1px solid #ef9a9a;
         }
     </style>
 </head>
@@ -478,28 +686,101 @@ Set rsOrders = conn.Execute(sqlOrders)
             <!-- Profile Section -->
             <div class="content-section active" id="profile">
                 <h2 class="section-title">Thông tin tài khoản</h2>
-                <div class="info-grid">
-                    <div class="info-row">
-                        <div class="info-label">Họ và tên:</div>
-                        <div class="info-value"><%=firstName%> <%=lastName%></div>
+
+                <%If Request.QueryString("msg") = "updated" Then%>
+                <div class="alert-message alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Cập nhật thông tin thành công!</span>
+                </div>
+                <%ElseIf Request.QueryString("msg") = "error" Then%>
+                <div class="alert-message alert-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>Có lỗi xảy ra. Vui lòng thử lại!</span>
+                </div>
+                <%End If%>
+
+                <!-- Profile View Mode -->
+                <div class="profile-view" id="profileView">
+                    <div class="info-grid">
+                        <div class="info-row">
+                            <div class="info-label">Họ:</div>
+                            <div class="info-value"><%=firstName%></div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Tên:</div>
+                            <div class="info-value"><%=lastName%></div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Email:</div>
+                            <div class="info-value"><%=email%></div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Số điện thoại:</div>
+                            <div class="info-value"><%=phone%></div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Địa chỉ:</div>
+                            <div class="info-value"><%=address%></div>
+                        </div>
                     </div>
-                    <div class="info-row">
-                        <div class="info-label">Email:</div>
-                        <div class="info-value"><%=email%></div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">Số điện thoại:</div>
-                        <div class="info-value"><%=phone%></div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">Quốc gia:</div>
-                        <div class="info-value">Vietnam</div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">Địa chỉ:</div>
-                        <div class="info-value"><%=address%></div>
+                    <div class="profile-header">
+                        <div></div>
+                        <button class="btn-edit-profile" onclick="enableEditMode()">
+                            <i class="fas fa-edit"></i>
+                            <span>Chỉnh sửa</span>
+                        </button>
                     </div>
                 </div>
+
+                <!-- Profile Edit Form -->
+                <form class="profile-form" id="profileForm" method="POST" action="account.asp?action=update_profile">
+                    <div class="form-group">
+                        <label for="first_name">
+                            Họ <span class="required">*</span>
+                        </label>
+                        <input type="text" id="first_name" name="first_name" value="<%=firstName%>" required placeholder="Nhập họ">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="last_name">
+                            Tên <span class="required">*</span>
+                        </label>
+                        <input type="text" id="last_name" name="last_name" value="<%=lastName%>" required placeholder="Nhập tên">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">
+                            Email
+                        </label>
+                        <input type="email" id="email" value="<%=email%>" disabled>
+                        <small>Email không thể thay đổi</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">
+                            Số điện thoại <span class="required">*</span>
+                        </label>
+                        <input type="tel" id="phone" name="phone" value="<%=phone%>" required placeholder="Nhập số điện thoại">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">
+                            Địa chỉ
+                        </label>
+                        <textarea id="address" name="address" placeholder="Nhập địa chỉ"><%=address%></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-save">
+                            <i class="fas fa-save"></i>
+                            <span>Lưu thay đổi</span>
+                        </button>
+                        <button type="button" class="btn-cancel" onclick="cancelEditMode()">
+                            <i class="fas fa-times"></i>
+                            <span>Hủy</span>
+                        </button>
+                    </div>
+                </form>
             </div>
 
             <!-- Password Section -->
@@ -533,7 +814,6 @@ Set rsOrders = conn.Execute(sqlOrders)
                 <div id="passwordMessage" class="password-message"></div>
             </div>
 
-
             <!-- Orders Section -->
             <div class="content-section" id="orders">
                 <h2 class="section-title">Danh sách đơn hàng mới nhất</h2>
@@ -564,8 +844,7 @@ Set rsOrders = conn.Execute(sqlOrders)
                             <th>Mã đơn hàng</th>
                             <th>Ngày đặt</th>
                             <th>Thành tiền</th>
-                            <th>Trạng thái thanh toán</th>
-                            <th>Vận chuyển</th>
+                            <th>Trạng thái đơn hàng</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -598,7 +877,6 @@ Set rsOrders = conn.Execute(sqlOrders)
                             <td><%=FormatDateTime(orderDate, 2)%></td>
                             <td class="order-amount"><%=FormatNumber(finalAmount, 0)%>₫</td>
                             <td><span class="order-status <%=statusClass%>"><%=statusText%></span></td>
-                            <td><span class="order-status <%=statusClass%>"><%=statusText%></span></td>
                         </tr>
                         <%
                             rsOrders.MoveNext
@@ -609,6 +887,7 @@ Set rsOrders = conn.Execute(sqlOrders)
                 <%
                 End If
                 rsOrders.Close
+                Set rsOrders = Nothing
                 %>
             </div>
         </div>
@@ -629,7 +908,6 @@ Set rsOrders = conn.Execute(sqlOrders)
 
         // Sidebar navigation
         function showSection(sectionName) {
-            // Update sidebar
             document.querySelectorAll('.sidebar-item').forEach(item => {
                 item.classList.remove('active');
                 if (item.getAttribute('data-section') === sectionName) {
@@ -637,11 +915,15 @@ Set rsOrders = conn.Execute(sqlOrders)
                 }
             });
 
-            // Update content
             document.querySelectorAll('.content-section').forEach(section => {
                 section.classList.remove('active');
             });
             document.getElementById(sectionName).classList.add('active');
+            
+            // Reset edit mode when switching sections
+            if (sectionName !== 'profile') {
+                cancelEditMode();
+            }
         }
 
         document.querySelectorAll('.sidebar-item[data-section]').forEach(item => {
@@ -649,6 +931,42 @@ Set rsOrders = conn.Execute(sqlOrders)
                 const section = this.getAttribute('data-section');
                 showSection(section);
             });
+        });
+
+        // Profile Edit Functions
+        function enableEditMode() {
+            document.getElementById('profileView').style.display = 'none';
+            document.getElementById('profileForm').classList.add('active');
+        }
+
+        function cancelEditMode() {
+            document.getElementById('profileView').style.display = 'block';
+            document.getElementById('profileForm').classList.remove('active');
+            // Reset form to original values
+            document.getElementById('profileForm').reset();
+        }
+
+        // Form validation before submit
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            const firstName = document.getElementById('first_name').value.trim();
+            const lastName = document.getElementById('last_name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+
+            if (firstName === '' || lastName === '' || phone === '') {
+                e.preventDefault();
+                alert('Vui lòng điền đầy đủ thông tin bắt buộc!');
+                return false;
+            }
+
+            // Validate phone number (basic)
+            const phoneRegex = /^[0-9]{10,11}$/;
+            if (!phoneRegex.test(phone)) {
+                e.preventDefault();
+                alert('Số điện thoại không hợp lệ! Vui lòng nhập 10-11 chữ số.');
+                return false;
+            }
+
+            return true;
         });
 
         // Filter orders
@@ -672,6 +990,7 @@ Set rsOrders = conn.Execute(sqlOrders)
         if (window.location.hash === '#orders') {
             showSection('orders');
         }
+
         // Change Password Form
         document.getElementById('changePasswordForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -679,7 +998,6 @@ Set rsOrders = conn.Execute(sqlOrders)
             const currentPassword = document.getElementById('currentPassword').value;
             const newPassword = document.getElementById('newPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
-            const messageBox = document.getElementById('passwordMessage');
 
             // Validation
             if (newPassword.length < 6) {
@@ -698,8 +1016,7 @@ Set rsOrders = conn.Execute(sqlOrders)
             }
 
             try {
-                const params = new URLSearchParams(new FormData(this));
-
+                const params = new URLSearchParams();
                 params.append('current_password', currentPassword);
                 params.append('new_password', newPassword);
                 params.append('confirm_password', confirmPassword);
@@ -728,8 +1045,7 @@ Set rsOrders = conn.Execute(sqlOrders)
 
         function showMessage(message, type) {
             const messageBox = document.getElementById('passwordMessage');
-
-            messageBox.style.display = 'block'; // 🔥 BẬT LẠI
+            messageBox.style.display = 'block';
             messageBox.textContent = message;
             messageBox.className = 'password-message ' + type;
 
@@ -742,12 +1058,31 @@ Set rsOrders = conn.Execute(sqlOrders)
 
         function resetPasswordForm() {
             document.getElementById('changePasswordForm').reset();
+            const messageBox = document.getElementById('passwordMessage');
+            messageBox.style.display = 'none';
         }
+
+        // Auto hide success/error messages after 5 seconds
+        window.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert-message');
+            alerts.forEach(alert => {
+                setTimeout(function() {
+                    alert.style.opacity = '0';
+                    alert.style.transition = 'opacity 0.5s';
+                    setTimeout(function() {
+                        alert.style.display = 'none';
+                    }, 500);
+                }, 5000);
+            });
+        });
     </script>
     <script src="../../FE/js/header-footer.js"></script>
 </body>
 </html>
 <%
-conn.Close
-Set conn = Nothing
+' Clean up - Đóng connection
+If Not conn Is Nothing Then
+    If conn.State = 1 Then conn.Close
+    Set conn = Nothing
+End If
 %>

@@ -25,6 +25,7 @@ Sub WriteUTF8(text)
     stream.Close
     Set stream = Nothing
 End Sub
+
 ' Kiểm tra đăng nhập
 If Session("UserID") = "" Or Not IsNumeric(Session("UserID")) Then
     Response.Redirect "login.asp"
@@ -33,11 +34,45 @@ End If
 
 Dim userId : userId = CLng(Session("UserID"))
 Dim orderId : orderId = Request.QueryString("id")
+Dim actionType : actionType = Request.QueryString("action")
 
 ' Validate orderId
 If orderId = "" Or Not IsNumeric(orderId) Then
     Response.Redirect "account.asp"
     Response.End
+End If
+
+' XỬ LÝ HỦY ĐƠN HÀNG
+If actionType = "cancel" And Request.ServerVariables("REQUEST_METHOD") = "POST" Then
+    Dim cancelReason : cancelReason = Request.Form("cancelReason")
+    
+    ' Kiểm tra đơn hàng có thuộc về user này không và trạng thái có cho phép hủy không
+    Dim sqlCheckCancel, rsCheckCancel
+    sqlCheckCancel = "SELECT Status FROM Orders WHERE OrderID = " & orderId & " AND UserID = " & userId
+    Set rsCheckCancel = conn.Execute(sqlCheckCancel)
+    
+    If Not rsCheckCancel.EOF Then
+        Dim currentStatus : currentStatus = rsCheckCancel("Status")
+        
+        ' Chỉ cho phép hủy đơn hàng có trạng thái 1 (Chờ xử lý) hoặc 2 (Đang giao hàng)
+        If currentStatus = 1 Or currentStatus = 2 Then
+            ' Cập nhật trạng thái đơn hàng thành 0 (Đã hủy)
+            Dim sqlCancelOrder
+            sqlCancelOrder = "UPDATE Orders SET Status = 0, Note = " & _
+                           "CASE WHEN Note IS NULL OR Note = '' " & _
+                           "THEN N'Lý do hủy: " & Replace(cancelReason, "'", "''") & "' " & _
+                           "ELSE Note + CHAR(13) + CHAR(10) + N'Lý do hủy: " & Replace(cancelReason, "'", "''") & "' " & _
+                           "END " & _
+                           "WHERE OrderID = " & orderId & " AND UserID = " & userId
+            
+            conn.Execute sqlCancelOrder
+            
+            ' Redirect về trang chi tiết với thông báo thành công
+            Response.Redirect "order-detail.asp?id=" & orderId & "&msg=cancelled"
+            Response.End
+        End If
+    End If
+    rsCheckCancel.Close
 End If
 
 ' Lấy thông tin đơn hàng
@@ -88,6 +123,9 @@ Select Case status
         statusClass = "status-cancelled"
         statusIcon = "fa-times-circle"
 End Select
+
+' Kiểm tra xem có cho phép hủy đơn không (chỉ hủy được khi status = 1 hoặc 2)
+Dim canCancel : canCancel = (status = 1 Or status = 2)
 
 ' Lấy chi tiết sản phẩm trong đơn hàng với ảnh chính từ ProductImages
 Dim sqlDetails, rsDetails
@@ -210,6 +248,192 @@ Set rsDetails = conn.Execute(sqlDetails)
             color: #333;
             font-size: 1.5rem;
             font-weight: 500;
+        }
+
+        /* Cancel Button */
+        .cancel-order-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-cancel-order {
+            background: #fff;
+            border: 2px solid #d32f2f;
+            color: #d32f2f;
+            padding: 12px 30px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-cancel-order:hover {
+            background: #d32f2f;
+            color: white;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 0;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            background: #d32f2f;
+            color: white;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .close {
+            color: white;
+            font-size: 2.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+            transition: opacity 0.2s;
+        }
+
+        .close:hover {
+            opacity: 0.7;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.4rem;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1.4rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #d32f2f;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .btn {
+            padding: 10px 25px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-danger {
+            background: #d32f2f;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #b71c1c;
+        }
+
+        /* Success Message */
+        .success-message {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            color: #2e7d32;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.4rem;
+            animation: slideDown 0.3s;
+        }
+
+        .success-message i {
+            font-size: 2rem;
         }
 
         /* Receiver Info Section */
@@ -437,6 +661,11 @@ Set rsDetails = conn.Execute(sqlDetails)
             color: #999;
         }
 
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .order-detail-container {
@@ -479,6 +708,20 @@ Set rsDetails = conn.Execute(sqlDetails)
             .payment-summary {
                 max-width: 100%;
             }
+
+            .modal-content {
+                margin: 20% auto;
+                width: 95%;
+            }
+
+            .cancel-order-section {
+                justify-content: center;
+            }
+
+            .btn-cancel-order {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -490,6 +733,13 @@ Set rsDetails = conn.Execute(sqlDetails)
             <i class="fas fa-arrow-left"></i>
             <span>Quay lại đơn hàng</span>
         </a>
+
+        <%If Request.QueryString("msg") = "cancelled" Then%>
+        <div class="success-message">
+            <i class="fas fa-check-circle"></i>
+            <span>Đơn hàng đã được hủy thành công!</span>
+        </div>
+        <%End If%>
 
         <!-- Order Header -->
         <div class="order-header">
@@ -511,6 +761,15 @@ Set rsDetails = conn.Execute(sqlDetails)
                     <span class="info-value"><%=paymentMethod%></span>
                 </div>
             </div>
+
+            <%If canCancel Then%>
+            <div class="cancel-order-section">
+                <button class="btn-cancel-order" onclick="openCancelModal()">
+                    <i class="fas fa-times-circle"></i>
+                    <span>Hủy đơn hàng</span>
+                </button>
+            </div>
+            <%End If%>
         </div>
 
         <!-- Receiver Information -->
@@ -657,6 +916,40 @@ Set rsDetails = conn.Execute(sqlDetails)
         </div>
     </div>
 
+    <!-- Cancel Order Modal -->
+    <div id="cancelModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Xác nhận hủy đơn hàng</h2>
+                <span class="close" onclick="closeCancelModal()">&times;</span>
+            </div>
+            <form method="POST" action="order-detail.asp?id=<%=orderId%>&action=cancel">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="cancelReason">Lý do hủy đơn hàng: <span style="color: #d32f2f;">*</span></label>
+                        <textarea 
+                            id="cancelReason" 
+                            name="cancelReason" 
+                            placeholder="Vui lòng nhập lý do hủy đơn hàng (ví dụ: Đặt nhầm sản phẩm, Muốn đổi địa chỉ giao hàng...)"
+                            required></textarea>
+                    </div>
+                    <p style="color: #666; font-size: 1.3rem; margin-top: 10px;">
+                        <i class="fas fa-info-circle"></i> 
+                        Đơn hàng đã hủy sẽ không thể khôi phục lại.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeCancelModal()">
+                        Đóng
+                    </button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-check"></i> Xác nhận hủy
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div id="footer"></div>
 
     <script>
@@ -669,11 +962,54 @@ Set rsDetails = conn.Execute(sqlDetails)
         }
         loadComponent("header", "../../FE/customer/component/header.asp");
         loadComponent("footer", "../../FE/customer/component/footer.html");
+
+        // Modal functions
+        function openCancelModal() {
+            document.getElementById('cancelModal').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Prevent body scroll
+        }
+
+        function closeCancelModal() {
+            document.getElementById('cancelModal').style.display = 'none';
+            document.body.style.overflow = 'auto'; // Re-enable body scroll
+            document.getElementById('cancelReason').value = ''; // Clear textarea
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('cancelModal');
+            if (event.target == modal) {
+                closeCancelModal();
+            }
+        }
+
+        // Confirm before submit
+        document.querySelector('#cancelModal form').addEventListener('submit', function(e) {
+            const reason = document.getElementById('cancelReason').value.trim();
+            if (reason.length < 10) {
+                e.preventDefault();
+                alert('Vui lòng nhập lý do hủy đơn ít nhất 10 ký tự!');
+                return false;
+            }
+            
+            const confirmed = confirm('Bạn có chắc chắn muốn hủy đơn hàng này? Hành động này không thể hoàn tác!');
+            if (!confirmed) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // Auto hide success message after 5 seconds
+        window.addEventListener('DOMContentLoaded', function() {
+            const successMsg = document.querySelector('.success-message');
+            if (successMsg) {
+                setTimeout(function() {
+                    successMsg.style.animation = 'fadeOut 0.5s';
+                    setTimeout(function() {
+                        successMsg.style.display = 'none';
+                    }, 500);
+                }, 5000);
+            }
+        });
     </script>
     <script src="../../FE/js/header-footer.js"></script>
-</body>
-</html>
-<%
-conn.Close
-Set conn = Nothing
-%>

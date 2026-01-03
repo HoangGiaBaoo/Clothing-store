@@ -344,6 +344,7 @@ Set rsNew = conn.Execute(sqlNew)
   <script src="../../FE/js/index.js"></script>
   <script src="../../FE/js/header-footer.js"></script>
   <script src="../../FE/js/category_list.js"></script>
+  <!--#include file="chat.asp"-->
 </body>
 </html>
 <%

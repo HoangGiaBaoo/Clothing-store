@@ -77,10 +77,10 @@ Dim labels, data
 labels = ""
 data   = ""
 
-sql = "SELECT MONTH(OrderDate) AS m, SUM(TotalAmount) AS total " & _
+sql = "SELECT MONTH(OrderDate) AS m, Year(OrderDate), SUM(TotalAmount) AS total " & _
       "FROM Orders " & _
-      "GROUP BY MONTH(OrderDate) " & _
-      "ORDER BY m"
+      "GROUP BY MONTH(OrderDate), Year(OrderDate) " & _
+      "ORDER BY Year(OrderDate)"
 
 rs.Open sql, conn
 Do While Not rs.EOF
@@ -121,7 +121,7 @@ End If
 
     <div class="header">
         <h3 class="mb-0">Dashboard</h3>
-       <span>Xin chào, <strong><% WriteUTF8(adminName) %></strong></span>
+       <span>Xin chào, <strong><%=adminName %></strong></span>
     </div>
 
     <!-- SUMMARY -->

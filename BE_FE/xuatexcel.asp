@@ -26,7 +26,7 @@ End Sub
 ' --- Ghi BOM UTF-8 để Excel nhận dạng ---
 Dim bom
 bom = Chr(&HEF) & Chr(&HBB) & Chr(&HBF)
-Response.BinaryWrite bom
+Response.Write bom
 
 Dim fromDate, toDate
 Dim sFrom, sTo

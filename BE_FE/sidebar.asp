@@ -2,19 +2,21 @@
 
 If IsEmpty(activePage) Then activePage = ""
 
-Dim dashActive, spActive, dhActive, khActive, bcActive
+Dim dashActive, spActive, dhActive, ndActive, bcActive,chActive
 dashActive = ""
 spActive   = ""
 dhActive   = ""
-khActive   = ""
+ndActive   = ""
 bcActive   = ""
+chActive   = ""
 
 Select Case activePage
     Case "dashboard": dashActive = "active"
     Case "sanpham":   spActive   = "active"
     Case "donhang":   dhActive   = "active"
-    Case "khachhang": khActive   = "active"
+    Case "nguoidung": ndActive   = "active"
     Case "thongke":    bcActive   = "active"
+    Case "chat":      chActive   = "active"
 End Select
 %>
 
@@ -36,15 +38,18 @@ End Select
         <i class="bi bi-bag-check me-2"></i>Đơn hàng
     </a>
 
-    <a href="khachhang.asp" class="<%= khActive %>">
-        <i class="bi bi-people me-2"></i>Khách hàng
+    <a href="nguoidung.asp" class="<%= ndActive %>">
+        <i class="bi bi-people me-2"></i>Người dùng
     </a>
 
     <a href="thongke.asp" class="<%= bcActive %>">
         <i class="bi bi-bar-chart me-2"></i>Thống kê
     </a>
+    <a href="admin_chat.asp" class="<%= chActive %>">
+    <i class="bi bi-chat-dots me-2"></i>Tin nhắn hỗ trợ
+    </a>
 
-    <a href="login.asp">
+    <a href="logout.asp">
         <i class="bi bi-box-arrow-right me-2"></i>Đăng xuất
     </a>
 </div>

@@ -114,7 +114,7 @@ For i = 1 To 5
         
         Dim sqlImg
         sqlImg = "INSERT INTO ProductImages(ProductID, ImageURL, IsMainImage, DisplayOrder, CreatedDate) " & _
-                 "VALUES (" & productID & ", " & SqlStr(imgUrl) & ", " & isMain & ", " & (i-1) & ", GETDATE())"
+                 "VALUES (" & productID & ", " & SqlStr(imgUrl) & ", " & isMain & ", " & (i) & ", GETDATE())"
         
         conn.Execute(sqlImg)
         

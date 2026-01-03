@@ -26,6 +26,7 @@
     size = request("sizename")
     max_price = request("max_price")
     sort = request("sort")
+    q = request("q")
 
     ' 1. Xây dựng câu truy vấn gốc cho Products
     if cate = 17 then
@@ -34,6 +35,19 @@
     elseif cate = 18 then
         sql = "SELECT DISTINCT P.* FROM Products P WHERE P.SalePrice < P.OriginalPrice and p.saleprice > 0 AND P.IsActive = 1"
         displayTitle = "Sale"
+    elseif cate = 19 then
+        sql = "SELECT DISTINCT P.* FROM Products P WHERE p.CategoryID = 5 OR p.CategoryID = 10 "
+        displayTitle = "Autumn/Winter clothing"
+    elseif cate = 20 then
+        sql = "SELECT DISTINCT P.* FROM Products P WHERE p.CategoryID = 7 OR p.CategoryID = 12 "
+        displayTitle = "Office Wear"
+    elseif cate = 21 then
+        sql = "SELECT DISTINCT P.* FROM Products P WHERE p.CategoryID = 6 OR p.CategoryID = 8 OR p.CategoryID = 15"
+        displayTitle = "Sports Apparel"
+    elseif cate = 22 then
+        sql = "SELECT DISTINCT P.* FROM Products P WHERE (p.ProductName LIKE N'%" & p & "%' " & _
+                "OR p.ProductCode LIKE N'%" & p & "%') "
+        displayTitle = p
     else
         ' Kiểm tra xem Cate là danh mục cha hay con
         set rsCate = conn.execute("SELECT CategoryID FROM Categories WHERE ParentCategoryID = " & cate)

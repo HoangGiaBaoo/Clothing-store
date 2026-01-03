@@ -113,7 +113,7 @@ document.getElementById('scrollRight').addEventListener('click', () => {
 
 // Xem tất cả
 document.querySelector('.view-all-btn').addEventListener('click', () => {
-    window.location.href = '/promotions.asp';
+    window.location.href = '/BE_FE/product_list.asp?cate=18';
 });
 
 // Load sản phẩm từ API
@@ -136,9 +136,9 @@ loadProducts();
 
 // Cấu hình danh mục
 const CATEGORY_CONFIG = {
-    1: { name: 'Đồ Thu Đông', slug: 'thu-dong' },
-    2: { name: 'Đồ Công Sở', slug: 'cong-so' },
-    3: { name: 'Đồ Thể Thao', slug: 'the-thao' }
+    1: { name: 'Đồ Thu Đông', slug: 19 },
+    2: { name: 'Đồ Công Sở', slug: 20 },
+    3: { name: 'Đồ Thể Thao', slug: 21 }
 };
 
 let currentCategoryId = 1;
@@ -237,7 +237,7 @@ function handleCategoryTabClick(event) {
 // Xử lý click nút "Xem tất cả"
 function handleViewAllClick() {
     const categorySlug = CATEGORY_CONFIG[currentCategoryId].slug;
-    window.location.href = `/category.asp?slug=${categorySlug}`;
+    window.location.href = `/BE_FE/product_list.asp?cate=${categorySlug}`;
 }
 
 // Khởi tạo

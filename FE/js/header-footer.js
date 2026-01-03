@@ -99,7 +99,7 @@
         const remaining = data.total - data.products.length;
         if (remaining > 0) {
             document.getElementById("remainingCount").textContent = remaining;
-            document.getElementById("viewMoreLink").href = `/search.asp?q=${encodeURIComponent(currentKeyword)}`;
+            document.getElementById("viewMoreLink").href = `/BE_FE/product_list.asp?cate=22&q=${encodeURIComponent(currentKeyword)}`;
             viewMoreContainer.style.display = "block";
         } else {
             viewMoreContainer.style.display = "none";

@@ -71,7 +71,7 @@ If Not rsUser.EOF Then
     
     
     If role = "admin" Then
-        Response.Redirect "admin/dashboard.asp"
+        Response.Redirect "dashboard.asp"
     Else
         Response.Redirect "index.asp"
     End If

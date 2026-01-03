@@ -101,7 +101,7 @@ End If
                 </li>
 
                 <li class="has-dropdown">
-                    <a href="#">
+                    <a href="product_list.asp?cate=3">
                         Phụ kiện
                         <i class="dropdown-icon fa-solid fa-angle-down"></i>
                     </a>
@@ -109,8 +109,6 @@ End If
                         <li><a href="product_list.asp?cate=16">Thắt Lưng</a></li>
                     </ul>
                 </li>
-
-                <li><a href="#">Hệ thống cửa hàng</a></li>
             </ul>
             <ul class="icon-list">
                 <li class="icon-list-item nav-search">
