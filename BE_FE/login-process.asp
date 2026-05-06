@@ -33,7 +33,7 @@ password = Replace(password, "'", "''")
 Dim sql, rsUser
 sql = "SELECT id, email, password, role, first_name, last_name, phone_number " & _
       "FROM users " & _
-      "WHERE email = N'" & email & "' AND password = N'" & password & "'"
+      "WHERE email = N'" & email & "' AND password = N'" & password & "' and status = 1"
 
 On Error Resume Next
 Set rsUser = conn.Execute(sql)

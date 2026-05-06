@@ -48,7 +48,7 @@ sFrom = SQLDate(CDate(fromDate))
 sTo   = SQLDate(DateAdd("d",1,CDate(toDate)))
 
 ' ================== TỔNG DOANH THU / ĐƠN ==================
-Set rsSummary = conn.Execute("SELECT COUNT(*) AS TotalOrders, SUM(FinalAmount) AS TotalRevenue FROM Orders WHERE OrderDate >= '" & sFrom & "' AND OrderDate < '" & sTo & "'")
+Set rsSummary = conn.Execute("SELECT COUNT(*) AS TotalOrders, SUM(FinalAmount) AS TotalRevenue FROM Orders WHERE OrderDate >= '" & sFrom & "' AND OrderDate < '" & sTo & "' and status = 3")
 If Not rsSummary.EOF Then
     totalOrders = rsSummary("TotalOrders")
     totalRevenue = rsSummary("TotalRevenue")
@@ -61,7 +61,7 @@ rsSummary.Close
 Set rsSummary = Nothing
 
 ' ================== TỔNG SẢN PHẨM ==================
-Set rsQty = conn.Execute("SELECT SUM(Quantity) AS TotalQty FROM OrderDetails od JOIN Orders o ON od.OrderID=o.OrderID WHERE o.OrderDate >= '" & sFrom & "' AND o.OrderDate < '" & sTo & "'")
+Set rsQty = conn.Execute("SELECT SUM(Quantity) AS TotalQty FROM OrderDetails od JOIN Orders o ON od.OrderID=o.OrderID WHERE o.OrderDate >= '" & sFrom & "' AND o.OrderDate < '" & sTo & "' and status = 3")
 If Not rsQty.EOF Then
     totalQty = rsQty("TotalQty")
     If IsNull(totalQty) Then totalQty = 0
@@ -72,10 +72,10 @@ rsQty.Close
 Set rsQty = Nothing
 
 ' ================== TOP 5 SẢN PHẨM ==================
-Set rsTop = conn.Execute("SELECT TOP 5 p.ProductName, SUM(od.Quantity) AS Qty FROM OrderDetails od JOIN Orders o ON od.OrderID=o.OrderID JOIN Products p ON od.ProductID=p.ProductID WHERE o.OrderDate >= '" & sFrom & "' AND o.OrderDate < '" & sTo & "' GROUP BY p.ProductName ORDER BY Qty DESC")
+Set rsTop = conn.Execute("SELECT TOP 5 p.ProductName, SUM(od.Quantity) AS Qty FROM OrderDetails od JOIN Orders o ON od.OrderID=o.OrderID JOIN Products p ON od.ProductID=p.ProductID WHERE o.OrderDate >= '" & sFrom & "' AND o.OrderDate < '" & sTo & "' And status = 3 GROUP BY p.ProductName ORDER BY Qty DESC")
 
 ' ================== CHI TIẾT SẢN PHẨM ==================
-Set rsDetail = conn.Execute("SELECT p.ProductName, SUM(od.Quantity) AS Qty, SUM(od.Quantity*od.Price) AS Amount FROM OrderDetails od JOIN Orders o ON od.OrderID=o.OrderID JOIN Products p ON od.ProductID=p.ProductID WHERE o.OrderDate >= '" & sFrom & "' AND o.OrderDate < '" & sTo & "' GROUP BY p.ProductName")
+Set rsDetail = conn.Execute("SELECT p.ProductName, SUM(od.Quantity) AS Qty, SUM(od.Quantity*od.Price) AS Amount FROM OrderDetails od JOIN Orders o ON od.OrderID=o.OrderID JOIN Products p ON od.ProductID=p.ProductID WHERE o.OrderDate >= '" & sFrom & "' AND o.OrderDate < '" & sTo & "' And status = 3 GROUP BY p.ProductName")
 
 ' ================== HEADER EXCEL ==================
 Response.ContentType = "application/vnd.ms-excel"

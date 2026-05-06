@@ -11,7 +11,7 @@ sql = "SELECT TOP 20 p.ProductID, p.ProductCode, p.ProductName, " & _
       "(SELECT COUNT(DISTINCT SizeName) FROM ProductVariants WHERE ProductID = p.ProductID AND IsActive = 1) as SizeCount " & _
       "FROM Products p " & _
       "WHERE p.SalePrice > 0 AND p.SalePrice < p.OriginalPrice AND p.IsActive = 1 " & _
-      "ORDER BY p.CreatedDate DESC"
+      "ORDER BY p.SalePrice ASC"
 
 Set rs = conn.Execute(sql)
 

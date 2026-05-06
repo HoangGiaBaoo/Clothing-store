@@ -50,7 +50,7 @@ End If
 '==============================
 Dim revenue, totalOrders, totalProducts, totalCustomers
 
-sql = "SELECT ISNULL(SUM(TotalAmount),0) AS Revenue FROM Orders"
+sql = "SELECT ISNULL(SUM(TotalAmount),0) AS Revenue FROM Orders WHERE status = 3"
 rs.Open sql, conn
 revenue = rs("Revenue")
 rs.Close
@@ -79,6 +79,7 @@ data   = ""
 
 sql = "SELECT MONTH(OrderDate) AS m, Year(OrderDate), SUM(TotalAmount) AS total " & _
       "FROM Orders " & _
+        "WHERE YEAR(OrderDate) = YEAR(GETDATE()) and status = 3" & _
       "GROUP BY MONTH(OrderDate), Year(OrderDate) " & _
       "ORDER BY Year(OrderDate)"
 
@@ -219,9 +220,9 @@ new Chart(document.getElementById('revenueChart'), {
         scales: {
             y: {
                 beginAtZero: true,
-                max: 250,          // 👈 FIX TRẦN 250 TRIỆU
+                max: 100,          // 👈 FIX TRẦN 250 TRIỆU
                 ticks: {
-                    stepSize: 50,  // 👈 mỗi vạch 50tr
+                    stepSize: 20,  // 👈 mỗi vạch 50tr
                     callback: v => v + ' tr'
                 },
                 grid: {

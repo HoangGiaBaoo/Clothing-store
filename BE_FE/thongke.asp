@@ -66,7 +66,7 @@ If isSubmit Then
     Set rsSummary = conn.Execute( _
         "SELECT COUNT(*) AS TotalOrders, SUM(FinalAmount) AS TotalRevenue " & _
         "FROM Orders " & _
-        "WHERE OrderDate >= '" & sFrom & "' AND OrderDate < '" & sTo & "'")
+        "WHERE OrderDate >= '" & sFrom & "' AND OrderDate < '" & sTo & "'And status = 3")
 
     If Not rsSummary.EOF Then
         totalOrders = rsSummary("TotalOrders")
@@ -81,7 +81,7 @@ If isSubmit Then
         "SELECT SUM(Quantity) AS TotalQty " & _
         "FROM OrderDetails od " & _
         "JOIN Orders o ON od.OrderID=o.OrderID " & _
-        "WHERE o.OrderDate >= '" & sFrom & "' AND o.OrderDate < '" & sTo & "'")
+        "WHERE o.OrderDate >= '" & sFrom & "' AND o.OrderDate < '" & sTo & "' And status = 3")
 
     If Not rsQty.EOF Then
         totalQty = rsQty("TotalQty")
@@ -96,7 +96,7 @@ If isSubmit Then
         "FROM OrderDetails od " & _
         "JOIN Orders o ON od.OrderID=o.OrderID " & _
         "JOIN Products p ON od.ProductID=p.ProductID " & _
-        "WHERE o.OrderDate >= '" & sFrom & "' AND o.OrderDate < '" & sTo & "' " & _
+        "WHERE o.OrderDate >= '" & sFrom & "' AND o.OrderDate < '" & sTo & "' And status = 3" & _
         "GROUP BY p.ProductName ORDER BY Qty DESC")
 
     ' ======= DETAIL TABLE =======
@@ -106,7 +106,7 @@ If isSubmit Then
         "FROM OrderDetails od " & _
         "JOIN Orders o ON od.OrderID=o.OrderID " & _
         "JOIN Products p ON od.ProductID=p.ProductID " & _
-        "WHERE o.OrderDate >= '" & sFrom & "' AND o.OrderDate < '" & sTo & "' " & _
+        "WHERE o.OrderDate >= '" & sFrom & "' AND o.OrderDate < '" & sTo & "' and status =3" & _
         "GROUP BY p.ProductName")
 
 End If

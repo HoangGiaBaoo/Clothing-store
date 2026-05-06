@@ -4,5 +4,5 @@
 Session.Abandon
 
 ' Chuyển về trang đăng nhập hoặc trang chủ
-Response.Redirect("index.asp")
+Response.Redirect("login.asp")
 %>

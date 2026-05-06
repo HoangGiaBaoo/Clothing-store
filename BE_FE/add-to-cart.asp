@@ -57,7 +57,7 @@ rsStock.Open sqlStock, conn
 If rsStock.EOF Then
     rsStock.Close
     conn.Close
-    Response.Write "<script>alert('Sản phẩm không tồn tại!'); history.back();</script>"
+    Response.Write "<script>alert('San pham khong ton tai!'); history.back();</script>"
     Response.End
 End If
 
